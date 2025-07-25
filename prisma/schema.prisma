@@ -10,14 +10,22 @@ datasource db {
 
 model User {
   id                      String     @id @default(auto()) @map("_id") @db.ObjectId
-  firstName               String?
-  lastName                String?
-  email                   String?    @unique
-  password                String?
-  avatar                  String     @default("https://res.cloudinary.com/dae5vlvpe/image/upload/v1753372351/avatar_e0wegn.png")
+  firstName               String
+  lastName                String
+  email                   String     @unique
+  password                String
+  avatar                  String?
+  bio                     String?
+  location                String?
+  website                 String?
+  facebook                String?
+  instagram               String?
+  youtube                 String?
+  tiktok                  String?
   images                  Image[]    @relation("userImages")
   likes                   Like[]     @relation("userLikes")
   favorites               Favorite[] @relation("userFavorites")
+  comments                Comment[]  @relation("userComments")
   createdAt               DateTime   @default(now())
   updatedAt               DateTime   @updatedAt
   isVerified              Boolean    @default(false)
@@ -27,31 +35,42 @@ model User {
 
 model Image {
   id        String     @id @default(auto()) @map("_id") @db.ObjectId
-  imageBy   User       @relation(fields: [userId], references: [id], name: "userImages")
+  user      User       @relation(fields: [userId], references: [id], name: "userImages")
   userId    String     @db.ObjectId
-  likes     Like[]     @relation("imageLike")
+  likes     Like[]     @relation("imageLikes")
   favorites Favorite[] @relation("imagefavorites")
+  comments  Comment[]  @relation("imageComments")
   url       String
   published Boolean    @default(false)
   addedAt   DateTime   @default(now())
 }
 
 model Like {
-  id         String @id @default(auto()) @map("_id") @db.ObjectId
-  user       User   @relation(fields: [userId], references: [id], name: "userLikes")
-  userId     String @db.ObjectId
-  imageLikes Image  @relation(fields: [imageId], references: [id], name: "imageLike")
-  imageId    String @db.ObjectId
+  id      String @id @default(auto()) @map("_id") @db.ObjectId
+  user    User   @relation(fields: [userId], references: [id], name: "userLikes")
+  userId  String @db.ObjectId
+  image   Image  @relation(fields: [imageId], references: [id], name: "imageLikes")
+  imageId String @db.ObjectId
 
   @@unique([userId, imageId])
 }
 
 model Favorite {
-  id            String @id @default(auto()) @map("_id") @db.ObjectId
-  favoratedBy   User   @relation(fields: [userId], references: [id], name: "userFavorites")
-  userId        String @db.ObjectId
-  imageFavorite Image  @relation(fields: [imageId], references: [id], name: "imagefavorites")
-  imageId       String @db.ObjectId
+  id      String @id @default(auto()) @map("_id") @db.ObjectId
+  user    User   @relation(fields: [userId], references: [id], name: "userFavorites")
+  userId  String @db.ObjectId
+  image   Image  @relation(fields: [imageId], references: [id], name: "imagefavorites")
+  imageId String @db.ObjectId
+
+  @@unique([userId, imageId])
+}
+
+model Comment {
+  id      String @id @default(auto()) @map("_id") @db.ObjectId
+  user    User   @relation(fields: [userId], references: [id], name: "userComments")
+  userId  String @db.ObjectId
+  image   Image  @relation(fields: [imageId], references: [id], name: "imageComments")
+  imageId String @db.ObjectId
 
   @@unique([userId, imageId])
 }

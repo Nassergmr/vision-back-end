@@ -13,7 +13,7 @@ export const GetAllMedia = expressAsyncHandler(async (req, res) => {
         published: true,
       },
       include: {
-        imageBy: true,
+        user: true,
         likes: true,
       },
     });
@@ -31,6 +31,8 @@ export const GetAllMedia = expressAsyncHandler(async (req, res) => {
     console.log(error);
   }
 });
+
+//////////////////////////////////////////////////////////////////////////////
 
 // Update Media
 export const UpdateMedia = expressAsyncHandler(async (req, res) => {
@@ -52,6 +54,35 @@ export const UpdateMedia = expressAsyncHandler(async (req, res) => {
     res.status(200).json({
       message: "Media Updated",
       media,
+    });
+  } catch (error) {
+    console.log(error);
+  }
+});
+
+//////////////////////////////////////////////////////////////////////////////
+
+// Update Media Likes
+export const UpdateLikes = expressAsyncHandler(async (req, res) => {
+  const mediaId = req.body.mediaId;
+  const userId = req.body.userId;
+
+  try {
+    const likes = await prisma.like.create({
+      data: {
+        imageId: mediaId,
+        userId: userId,
+      },
+    });
+    if (!likes) {
+      res.status(404).json({
+        message: "No likes found",
+      });
+      return;
+    }
+    res.status(200).json({
+      message: "Likes Updated",
+      likes,
     });
   } catch (error) {
     console.log(error);

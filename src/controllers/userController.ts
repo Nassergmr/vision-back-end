@@ -298,7 +298,9 @@ export const UserUpdates = expressAsyncHandler(async (req, res) => {
   }
 });
 
-// Update user Avatar (dashboard)
+//////////////////////////////////////////////////////////////////////////////
+
+// Update User Avatar (dashboard)
 export const UserAvatarUpdate = expressAsyncHandler(async (req, res) => {
   try {
     if (!req.file) {
