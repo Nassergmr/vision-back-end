@@ -4,12 +4,15 @@ import {
   VerifyUser,
   LoginUser,
   RegisterUser,
-  UserInfo,
-  UploadFile,
+  UserDashboard,
+  UploadMedia,
   GetAllUsers,
-  UserProfile,
-  UserUpdates,
-  UserAvatarUpdate,
+  UserProfilePublic,
+  UserProfileEdit,
+  UserAvatarEdit,
+  CreateUserCollection,
+  GetUserCollections,
+  AddToCollection,
 } from "../controllers/userController";
 import multer from "multer";
 import { v2 as cloudinary } from "cloudinary";
@@ -37,17 +40,22 @@ const upload = multer({ storage });
 
 userRouter.get("/verify-email", VerifyUser);
 userRouter.get("/get-users", GetAllUsers);
-userRouter.get("/user-profile/:id", UserProfile);
-userRouter.get("/user-info", validateToken, UserInfo);
+userRouter.get("/profile/:id", UserProfilePublic);
+userRouter.get("/dashboard", validateToken, UserDashboard);
+userRouter.get("/get-collections", GetUserCollections);
+
 userRouter.post("/register", RegisterUser);
 userRouter.post("/login", LoginUser);
-userRouter.post("/upload", validateToken, upload.single("file"), UploadFile);
-userRouter.patch("/user-update", UserUpdates);
+userRouter.post("/upload", validateToken, upload.single("media"), UploadMedia);
+userRouter.post("/create-collection", CreateUserCollection);
+userRouter.post("/update-collection", AddToCollection);
+
+userRouter.patch("/profile-edit", UserProfileEdit);
 userRouter.patch(
-  "/user-avatar-update",
+  "/avatar-edit",
   validateToken,
-  upload.single("file"),
-  UserAvatarUpdate
+  upload.single("avatar"),
+  UserAvatarEdit
 );
 
 export default userRouter;

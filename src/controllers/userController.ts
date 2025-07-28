@@ -69,7 +69,7 @@ export const RegisterUser = expressAsyncHandler(async (req, res) => {
   }
 });
 
-//////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////
 
 // Verify The User Email
 export const VerifyUser = expressAsyncHandler(async (req, res) => {
@@ -143,7 +143,7 @@ export const VerifyUser = expressAsyncHandler(async (req, res) => {
   }
 });
 
-//////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////
 
 // Log in the user
 export const LoginUser = expressAsyncHandler(async (req, res) => {
@@ -221,10 +221,10 @@ export const LoginUser = expressAsyncHandler(async (req, res) => {
   }
 });
 
-//////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////
 
-// Get user info (dashboard)
-export const UserInfo = expressAsyncHandler(
+// Get user profile (dashboard)
+export const UserDashboard = expressAsyncHandler(
   async (req: AuthenticatedRequest, res) => {
     try {
       if (!req.user?.id) {
@@ -238,7 +238,7 @@ export const UserInfo = expressAsyncHandler(
         where: { id: req.user.id },
         include: {
           images: true,
-          favorites: true,
+          collections: true,
           likes: true,
         },
       });
@@ -260,11 +260,22 @@ export const UserInfo = expressAsyncHandler(
   }
 );
 
-//////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////
 
-// Update user info (dashboard)
-export const UserUpdates = expressAsyncHandler(async (req, res) => {
-  const { id, firstName, lastName } = req.body;
+// Edit user profile (dashboard)
+export const UserProfileEdit = expressAsyncHandler(async (req, res) => {
+  const {
+    id,
+    firstName,
+    lastName,
+    bio,
+    location,
+    website,
+    facebook,
+    instagram,
+    youtube,
+    tiktok,
+  } = req.body;
 
   try {
     if (!req.body?.id) {
@@ -279,6 +290,13 @@ export const UserUpdates = expressAsyncHandler(async (req, res) => {
       data: {
         ...(firstName && { firstName }),
         ...(lastName && { lastName }),
+        ...(bio && { bio }),
+        ...(location && { location }),
+        ...(website && { website }),
+        ...(facebook && { facebook }),
+        ...(instagram && { instagram }),
+        ...(youtube && { youtube }),
+        ...(tiktok && { tiktok }),
       },
     });
 
@@ -298,10 +316,10 @@ export const UserUpdates = expressAsyncHandler(async (req, res) => {
   }
 });
 
-//////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////
 
-// Update User Avatar (dashboard)
-export const UserAvatarUpdate = expressAsyncHandler(async (req, res) => {
+// Edit user avatar (dashboard)
+export const UserAvatarEdit = expressAsyncHandler(async (req, res) => {
   try {
     if (!req.file) {
       res.status(400).json({
@@ -332,10 +350,10 @@ export const UserAvatarUpdate = expressAsyncHandler(async (req, res) => {
   }
 });
 
-//////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////
 
 // Get user profile (public)
-export const UserProfile = expressAsyncHandler(async (req, res) => {
+export const UserProfilePublic = expressAsyncHandler(async (req, res) => {
   try {
     if (!req.params?.id) {
       res.status(404).json({
@@ -365,7 +383,7 @@ export const UserProfile = expressAsyncHandler(async (req, res) => {
   }
 });
 
-//////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////
 
 // Get All Users
 export const GetAllUsers = expressAsyncHandler(async (req, res) => {
@@ -386,14 +404,14 @@ export const GetAllUsers = expressAsyncHandler(async (req, res) => {
   }
 });
 
-//////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////
 
-// File Uploads
-export const UploadFile = expressAsyncHandler(async (req, res) => {
+// Media Upload
+export const UploadMedia = expressAsyncHandler(async (req, res) => {
   try {
     if (!req.file) {
       res.status(400).json({
-        message: "No file uploaded",
+        message: "No media uploaded",
       });
       return;
     }
@@ -416,7 +434,7 @@ export const UploadFile = expressAsyncHandler(async (req, res) => {
       return;
     }
 
-    const file = await prisma.image.create({
+    const media = await prisma.image.create({
       data: {
         url: req.file.path,
         userId: user.id,
@@ -424,11 +442,99 @@ export const UploadFile = expressAsyncHandler(async (req, res) => {
     });
 
     res.status(200).json({
-      message: "file uploaded successfully",
-      data: file,
+      message: "media uploaded successfully",
+      data: media,
     });
-    console.log(file);
+    console.log(media);
   } catch (error) {
+    console.log(error);
+  }
+});
+
+/////////////////////////////////////////////////////////////////////////////////////
+
+// Get user collections
+export const GetUserCollections = expressAsyncHandler(async (req, res) => {
+  try {
+    const collection = await prisma.collection.findMany({
+      include: {
+        images: true,
+      },
+    });
+    if (!collection) {
+      res.status(404).json({
+        message: "No collection found",
+      });
+      return;
+    }
+    res.status(200).json({
+      message: "Collection Updated",
+      collection,
+    });
+  } catch (error) {
+    console.log(error);
+  }
+});
+
+/////////////////////////////////////////////////////////////////////////////////////
+
+// Create user collection and add media
+export const CreateUserCollection = expressAsyncHandler(async (req, res) => {
+  const title = req.body.title;
+  const userId = req.body.userId;
+  const mediaId = req.body.mediaId;
+
+  try {
+    await prisma.collection.create({
+      data: {
+        title: title,
+        userId: userId,
+        images: {
+          connect: [{ id: mediaId }],
+        },
+      },
+      include: {
+        images: true,
+        user: true,
+      },
+    });
+    res.status(200).json({
+      message: "Collection Updated",
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: error,
+    });
+    console.log(error);
+  }
+});
+
+/////////////////////////////////////////////////////////////////////////////////////
+
+// Add media to an existing user collection
+export const AddToCollection = expressAsyncHandler(async (req, res) => {
+  const id = req.body.id;
+  const mediaId = req.body.mediaId;
+
+  try {
+    await prisma.collection.update({
+      where: {
+        id: id,
+      },
+      data: {
+        images: {
+          connect: [{ id: mediaId }],
+        },
+      },
+      include: { images: true, user: true },
+    });
+    res.status(200).json({
+      message: "Collection Updated",
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: error,
+    });
     console.log(error);
   }
 });

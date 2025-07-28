@@ -9,10 +9,10 @@ datasource db {
 }
 
 model User {
-  id                      String     @id @default(auto()) @map("_id") @db.ObjectId
+  id                      String       @id @default(auto()) @map("_id") @db.ObjectId
   firstName               String
   lastName                String
-  email                   String     @unique
+  email                   String       @unique
   password                String
   avatar                  String?
   bio                     String?
@@ -22,55 +22,67 @@ model User {
   instagram               String?
   youtube                 String?
   tiktok                  String?
-  images                  Image[]    @relation("userImages")
-  likes                   Like[]     @relation("userLikes")
-  favorites               Favorite[] @relation("userFavorites")
-  comments                Comment[]  @relation("userComments")
-  createdAt               DateTime   @default(now())
-  updatedAt               DateTime   @updatedAt
-  isVerified              Boolean    @default(false)
+  images                  Image[]      @relation("userImages")
+  likes                   Like[]       @relation("userLikes")
+  collections             Collection[] @relation("userCollections")
+  comments                Comment[]    @relation("userComments")
+  createdAt               DateTime     @default(now())
+  updatedAt               DateTime     @updatedAt
+  isVerified              Boolean      @default(false)
   verificationToken       String?
   verificationTokenExpiry DateTime?
 }
 
 model Image {
-  id        String     @id @default(auto()) @map("_id") @db.ObjectId
-  user      User       @relation(fields: [userId], references: [id], name: "userImages")
-  userId    String     @db.ObjectId
-  likes     Like[]     @relation("imageLikes")
-  favorites Favorite[] @relation("imagefavorites")
-  comments  Comment[]  @relation("imageComments")
+  id     String @id @default(auto()) @map("_id") @db.ObjectId
+  user   User   @relation(fields: [userId], references: [id], name: "userImages")
+  userId String @db.ObjectId
+
+  likes Like[] @relation("imageLikes")
+
+  collections   Collection[] @relation(fields: [collectionIds], references: [id])
+  collectionIds String[]     @db.ObjectId
+
+  comments  Comment[] @relation("imageComments")
   url       String
-  published Boolean    @default(false)
-  addedAt   DateTime   @default(now())
+  published Boolean   @default(false)
+  addedAt   DateTime  @default(now())
+
+  @@unique([id, url])
 }
 
 model Like {
-  id      String @id @default(auto()) @map("_id") @db.ObjectId
-  user    User   @relation(fields: [userId], references: [id], name: "userLikes")
-  userId  String @db.ObjectId
-  image   Image  @relation(fields: [imageId], references: [id], name: "imageLikes")
-  imageId String @db.ObjectId
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+
+  user   User   @relation(fields: [userId], references: [id], name: "userLikes")
+  userId String @db.ObjectId
+
+  image    Image  @relation(fields: [imageId, imageUrl], references: [id, url], name: "imageLikes")
+  imageId  String @db.ObjectId
+  imageUrl String
 
   @@unique([userId, imageId])
 }
 
-model Favorite {
-  id      String @id @default(auto()) @map("_id") @db.ObjectId
-  user    User   @relation(fields: [userId], references: [id], name: "userFavorites")
-  userId  String @db.ObjectId
-  image   Image  @relation(fields: [imageId], references: [id], name: "imagefavorites")
-  imageId String @db.ObjectId
+model Collection {
+  id    String @id @default(auto()) @map("_id") @db.ObjectId
+  title String
 
-  @@unique([userId, imageId])
+  user   User   @relation(fields: [userId], references: [id], name: "userCollections")
+  userId String @db.ObjectId
+
+  images    Image[]  @relation(fields: [imagesIds], references: [id])
+  imagesIds String[] @db.ObjectId
 }
 
 model Comment {
   id      String @id @default(auto()) @map("_id") @db.ObjectId
-  user    User   @relation(fields: [userId], references: [id], name: "userComments")
-  userId  String @db.ObjectId
-  image   Image  @relation(fields: [imageId], references: [id], name: "imageComments")
-  imageId String @db.ObjectId
+  content String
 
-  @@unique([userId, imageId])
+  user   User   @relation(fields: [userId], references: [id], name: "userComments")
+  userId String @db.ObjectId
+
+  image    Image  @relation(fields: [imageId], references: [id], name: "imageComments")
+  imageId  String @db.ObjectId
+  imageUrl String
 }

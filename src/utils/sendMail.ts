@@ -12,7 +12,6 @@ export const SendMail = (email: string, emailToken: string) => {
       },
     });
 
-    // Wrap in an async IIFE so we can use await.
     (async () => {
       const info = await transporter.sendMail({
         from: process.env.SMTP_USER,
