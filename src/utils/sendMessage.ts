@@ -1,6 +1,10 @@
 import nodemailer from "nodemailer";
 
-export const SendMail = (email: string, emailToken: string) => {
+export const SendMessage = (
+  sender: string,
+  reciever: string,
+  content: string
+) => {
   try {
     const transporter = nodemailer.createTransport({
       host: process.env.SMTP_HOST,
@@ -15,11 +19,10 @@ export const SendMail = (email: string, emailToken: string) => {
     (async () => {
       const info = await transporter.sendMail({
         from: `"Vision" <${process.env.SMTP_USER}>`,
-        to: email,
-        subject: "Email Verification",
-        text: `Please verify your email by clicking the following link: https://localhost:3000/verify-email?token=${emailToken}`,
-        html: `<p>Please verify your email by clicking the link below:</p>
-       <a href="http://localhost:3000/verify-email?token=${emailToken}">Verify Email</a>`,
+        to: reciever,
+        subject: `Message from ${sender}`,
+        text: `${content}`,
+        replyTo: sender,
       });
 
       console.log("Message sent:", info.messageId);

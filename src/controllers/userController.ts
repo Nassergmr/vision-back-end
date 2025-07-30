@@ -6,6 +6,7 @@ import dotenv from "dotenv";
 import { Request } from "express";
 import crypto from "crypto";
 import { SendMail } from "../utils/sendMail";
+import { SendMessage } from "../utils/sendMessage";
 
 interface AuthenticatedRequest extends Request {
   user?: {
@@ -17,7 +18,7 @@ interface AuthenticatedRequest extends Request {
 const prisma = new PrismaClient();
 dotenv.config();
 
-// Register The User
+// Register the user
 export const RegisterUser = expressAsyncHandler(async (req, res) => {
   const { userFirstName, userLastName, userEmail, userPassword } = req.body;
 
@@ -71,7 +72,25 @@ export const RegisterUser = expressAsyncHandler(async (req, res) => {
 
 /////////////////////////////////////////////////////////////////////////////////////
 
-// Verify The User Email
+// Send the user message
+export const SendUserMessage = expressAsyncHandler(async (req, res) => {
+  const sender = req.body.sender;
+  const reciever = req.body.reciever;
+  const content = req.body.content;
+
+  try {
+    SendMessage(sender, reciever, content);
+    res.status(200).json({
+      message: "Message sent successfully!",
+    });
+  } catch (error) {
+    console.log(error);
+  }
+});
+
+/////////////////////////////////////////////////////////////////////////////////////
+
+// Verify the user email
 export const VerifyUser = expressAsyncHandler(async (req, res) => {
   const { token } = req.query;
 
@@ -240,6 +259,8 @@ export const UserDashboard = expressAsyncHandler(
           images: true,
           collections: true,
           likes: true,
+          userIsFollowedBy: true,
+          userIsFollowing: true,
         },
       });
 
@@ -318,7 +339,7 @@ export const UserProfileEdit = expressAsyncHandler(async (req, res) => {
 
 /////////////////////////////////////////////////////////////////////////////////////
 
-// Edit user avatar (dashboard)
+// Edit the user avatar (dashboard)
 export const UserAvatarEdit = expressAsyncHandler(async (req, res) => {
   try {
     if (!req.file) {
@@ -364,7 +385,7 @@ export const UserProfilePublic = expressAsyncHandler(async (req, res) => {
 
     const user = await prisma.user.findUnique({
       where: { id: req.params.id },
-      include: { images: true },
+      include: { images: true, userIsFollowing: true, userIsFollowedBy: true },
     });
 
     if (!user) {
@@ -385,7 +406,7 @@ export const UserProfilePublic = expressAsyncHandler(async (req, res) => {
 
 /////////////////////////////////////////////////////////////////////////////////////
 
-// Get All Users
+// Get all users
 export const GetAllUsers = expressAsyncHandler(async (req, res) => {
   try {
     const user = await prisma.user.findMany();
@@ -406,12 +427,12 @@ export const GetAllUsers = expressAsyncHandler(async (req, res) => {
 
 /////////////////////////////////////////////////////////////////////////////////////
 
-// Media Upload
-export const UploadMedia = expressAsyncHandler(async (req, res) => {
+// Image upload
+export const Uploadimage = expressAsyncHandler(async (req, res) => {
   try {
     if (!req.file) {
       res.status(400).json({
-        message: "No media uploaded",
+        message: "No image uploaded",
       });
       return;
     }
@@ -434,7 +455,7 @@ export const UploadMedia = expressAsyncHandler(async (req, res) => {
       return;
     }
 
-    const media = await prisma.image.create({
+    const image = await prisma.image.create({
       data: {
         url: req.file.path,
         userId: user.id,
@@ -442,10 +463,10 @@ export const UploadMedia = expressAsyncHandler(async (req, res) => {
     });
 
     res.status(200).json({
-      message: "media uploaded successfully",
-      data: media,
+      message: "image uploaded successfully",
+      data: image,
     });
-    console.log(media);
+    console.log(image);
   } catch (error) {
     console.log(error);
   }
@@ -478,11 +499,11 @@ export const GetUserCollections = expressAsyncHandler(async (req, res) => {
 
 /////////////////////////////////////////////////////////////////////////////////////
 
-// Create user collection and add media
+// Create user collection and add image
 export const CreateUserCollection = expressAsyncHandler(async (req, res) => {
   const title = req.body.title;
   const userId = req.body.userId;
-  const mediaId = req.body.mediaId;
+  const imageId = req.body.imageId;
 
   try {
     await prisma.collection.create({
@@ -490,7 +511,7 @@ export const CreateUserCollection = expressAsyncHandler(async (req, res) => {
         title: title,
         userId: userId,
         images: {
-          connect: [{ id: mediaId }],
+          connect: [{ id: imageId }],
         },
       },
       include: {
@@ -511,10 +532,10 @@ export const CreateUserCollection = expressAsyncHandler(async (req, res) => {
 
 /////////////////////////////////////////////////////////////////////////////////////
 
-// Add media to an existing user collection
+// Add image to an existing user collection
 export const AddToCollection = expressAsyncHandler(async (req, res) => {
   const id = req.body.id;
-  const mediaId = req.body.mediaId;
+  const imageId = req.body.imageId;
 
   try {
     await prisma.collection.update({
@@ -523,7 +544,7 @@ export const AddToCollection = expressAsyncHandler(async (req, res) => {
       },
       data: {
         images: {
-          connect: [{ id: mediaId }],
+          connect: [{ id: imageId }],
         },
       },
       include: { images: true, user: true },
@@ -535,6 +556,25 @@ export const AddToCollection = expressAsyncHandler(async (req, res) => {
     res.status(500).json({
       message: error,
     });
+    console.log(error);
+  }
+});
+
+/////////////////////////////////////////////////////////////////////////////////////
+
+// User Follow Functionality
+export const UserFollow = expressAsyncHandler(async (req, res) => {
+  const userIsFollowingId = req.body.userIsFollowingId;
+  // const userIsFollowedById = req.body.userIsFollowedById;
+
+  try {
+    await prisma.following.create({
+      data: {
+        userIsFollowingId: userIsFollowingId,
+      },
+    });
+    console.log("Success");
+  } catch (error) {
     console.log(error);
   }
 });

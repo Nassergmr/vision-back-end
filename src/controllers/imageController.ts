@@ -5,10 +5,10 @@ import dotenv from "dotenv";
 const prisma = new PrismaClient();
 dotenv.config();
 
-// Get All Published Media
-export const GetAllPublishedMedia = expressAsyncHandler(async (req, res) => {
+// Get All Published image
+export const GetAllPublishedimage = expressAsyncHandler(async (req, res) => {
   try {
-    const media = await prisma.image.findMany({
+    const image = await prisma.image.findMany({
       where: {
         published: true,
       },
@@ -18,15 +18,15 @@ export const GetAllPublishedMedia = expressAsyncHandler(async (req, res) => {
         comments: true,
       },
     });
-    if (!media) {
+    if (!image) {
       res.status(404).json({
-        message: "No media found",
+        message: "No image found",
       });
       return;
     }
     res.status(200).json({
-      message: "Media found",
-      media,
+      message: "image found",
+      image,
     });
   } catch (error) {
     console.log(error);
@@ -35,14 +35,14 @@ export const GetAllPublishedMedia = expressAsyncHandler(async (req, res) => {
 
 //////////////////////////////////////////////////////////////////////////////
 
-// Update Media (draft --> published)
-export const UpdateMedia = expressAsyncHandler(async (req, res) => {
-  const mediaId = req.body.id;
+// Update image (draft --> published)
+export const Updateimage = expressAsyncHandler(async (req, res) => {
+  const imageId = req.body.id;
 
   try {
     const isPublished = await prisma.image.findUnique({
       where: {
-        id: mediaId,
+        id: imageId,
         AND: {
           published: true,
         },
@@ -52,7 +52,7 @@ export const UpdateMedia = expressAsyncHandler(async (req, res) => {
     if (isPublished) {
       await prisma.image.update({
         where: {
-          id: mediaId,
+          id: imageId,
         },
         data: {
           published: false,
@@ -64,21 +64,21 @@ export const UpdateMedia = expressAsyncHandler(async (req, res) => {
       return;
     }
 
-    const media = await prisma.image.update({
-      where: { id: mediaId },
+    const image = await prisma.image.update({
+      where: { id: imageId },
       data: {
         published: true,
       },
     });
-    if (!media) {
+    if (!image) {
       res.status(404).json({
-        message: "No media found",
+        message: "No image found",
       });
       return;
     }
     res.status(200).json({
       message: "Published Successfully",
-      media,
+      image,
     });
   } catch (error) {
     console.log(error);
@@ -87,16 +87,16 @@ export const UpdateMedia = expressAsyncHandler(async (req, res) => {
 
 //////////////////////////////////////////////////////////////////////////////
 
-// Update media likes
-export const UpdateMediaLikes = expressAsyncHandler(async (req, res) => {
-  const mediaId = req.body.mediaId;
-  const mediaUrl = req.body.mediaUrl;
+// Update image likes
+export const UpdateimageLikes = expressAsyncHandler(async (req, res) => {
+  const imageId = req.body.imageId;
+  const imageUrl = req.body.imageUrl;
   const userId = req.body.userId;
 
   const liked = await prisma.like.findUnique({
     where: {
       userId_imageId: {
-        imageId: mediaId,
+        imageId: imageId,
         userId: userId,
       },
     },
@@ -111,8 +111,8 @@ export const UpdateMediaLikes = expressAsyncHandler(async (req, res) => {
     }
     const likes = await prisma.like.create({
       data: {
-        imageId: mediaId,
-        imageUrl: mediaUrl,
+        imageId: imageId,
+        imageUrl: imageUrl,
         userId: userId,
       },
     });
@@ -133,19 +133,19 @@ export const UpdateMediaLikes = expressAsyncHandler(async (req, res) => {
 
 //////////////////////////////////////////////////////////////////////////////
 
-// Update media comments
-export const UpdateMediaComments = expressAsyncHandler(async (req, res) => {
+// Update image comments
+export const UpdateimageComments = expressAsyncHandler(async (req, res) => {
   const content = req.body.content;
-  const mediaId = req.body.mediaId;
-  const mediaUrl = req.body.mediaUrl;
+  const imageId = req.body.imageId;
+  const imageUrl = req.body.imageUrl;
   const userId = req.body.userId;
 
   try {
     const comment = await prisma.comment.create({
       data: {
         content: content,
-        imageId: mediaId,
-        imageUrl: mediaUrl,
+        imageId: imageId,
+        imageUrl: imageUrl,
         userId: userId,
       },
       // include: {

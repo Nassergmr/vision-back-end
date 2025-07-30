@@ -5,7 +5,7 @@ import {
   LoginUser,
   RegisterUser,
   UserDashboard,
-  UploadMedia,
+  Uploadimage,
   GetAllUsers,
   UserProfilePublic,
   UserProfileEdit,
@@ -13,6 +13,8 @@ import {
   CreateUserCollection,
   GetUserCollections,
   AddToCollection,
+  SendUserMessage,
+  UserFollow,
 } from "../controllers/userController";
 import multer from "multer";
 import { v2 as cloudinary } from "cloudinary";
@@ -46,9 +48,11 @@ userRouter.get("/get-collections", GetUserCollections);
 
 userRouter.post("/register", RegisterUser);
 userRouter.post("/login", LoginUser);
-userRouter.post("/upload", validateToken, upload.single("media"), UploadMedia);
+userRouter.post("/upload", validateToken, upload.single("image"), Uploadimage);
 userRouter.post("/create-collection", CreateUserCollection);
 userRouter.post("/update-collection", AddToCollection);
+userRouter.post("/send-message", SendUserMessage);
+userRouter.post("/follow-user", UserFollow);
 
 userRouter.patch("/profile-edit", UserProfileEdit);
 userRouter.patch(
