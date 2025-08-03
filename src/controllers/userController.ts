@@ -242,8 +242,8 @@ export const LoginUser = expressAsyncHandler(async (req, res) => {
 
 /////////////////////////////////////////////////////////////////////////////////////
 
-// Get user profile (dashboard)
-export const UserDashboard = expressAsyncHandler(
+// Get admin dashboard
+export const AdminDashboard = expressAsyncHandler(
   async (req: AuthenticatedRequest, res) => {
     try {
       if (!req.user?.id) {
@@ -283,7 +283,42 @@ export const UserDashboard = expressAsyncHandler(
 
 /////////////////////////////////////////////////////////////////////////////////////
 
-// Edit user profile (dashboard)
+// Get admin likes
+export const AdminLikes = expressAsyncHandler(
+  async (req: AuthenticatedRequest, res) => {
+    try {
+      if (!req.user?.id) {
+        res.status(401).json({
+          message: "Unauthorized",
+        });
+        return;
+      }
+
+      const user = await prisma.user.findUnique({
+        where: { id: req.user.id },
+        select: { likes: true },
+      });
+
+      if (!user) {
+        res.status(404).json({
+          message: "User not found",
+        });
+        return;
+      }
+
+      res.status(200).json(user);
+    } catch (error) {
+      console.error("User info error:", error);
+      res.status(500).json({
+        message: "Internal server error",
+      });
+    }
+  }
+);
+
+/////////////////////////////////////////////////////////////////////////////////////
+
+// Edit user profile
 export const UserProfileEdit = expressAsyncHandler(async (req, res) => {
   const {
     id,
@@ -339,7 +374,7 @@ export const UserProfileEdit = expressAsyncHandler(async (req, res) => {
 
 /////////////////////////////////////////////////////////////////////////////////////
 
-// Edit the user avatar (dashboard)
+// Edit the user avatar
 export const UserAvatarEdit = expressAsyncHandler(async (req, res) => {
   try {
     if (!req.file) {
@@ -409,7 +444,11 @@ export const UserProfilePublic = expressAsyncHandler(async (req, res) => {
 // Get all users
 export const GetAllUsers = expressAsyncHandler(async (req, res) => {
   try {
-    const user = await prisma.user.findMany();
+    const user = await prisma.user.findMany({
+      include: {
+        likes: true,
+      },
+    });
     if (!user) {
       res.status(404).json({
         message: "No users found",

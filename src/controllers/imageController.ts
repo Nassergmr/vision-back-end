@@ -5,8 +5,8 @@ import dotenv from "dotenv";
 const prisma = new PrismaClient();
 dotenv.config();
 
-// Get All Published image
-export const GetAllPublishedimage = expressAsyncHandler(async (req, res) => {
+// Get published images
+export const GetPublishedimages = expressAsyncHandler(async (req, res) => {
   try {
     const image = await prisma.image.findMany({
       where: {
@@ -87,6 +87,21 @@ export const Updateimage = expressAsyncHandler(async (req, res) => {
 
 //////////////////////////////////////////////////////////////////////////////
 
+// Get image likes
+export const GetImageLikes = expressAsyncHandler(async (req, res) => {
+  try {
+    const likes = await prisma.like.findMany();
+
+    res.status(200).json({
+      likes,
+    });
+  } catch (error) {
+    console.log(error);
+  }
+});
+
+//////////////////////////////////////////////////////////////////////////////
+
 // Update image likes
 export const UpdateimageLikes = expressAsyncHandler(async (req, res) => {
   const imageId = req.body.imageId;
@@ -104,8 +119,16 @@ export const UpdateimageLikes = expressAsyncHandler(async (req, res) => {
 
   try {
     if (liked) {
-      res.status(400).json({
-        message: "Image already liked!",
+      await prisma.like.delete({
+        where: {
+          userId_imageId: {
+            imageId: imageId,
+            userId: userId,
+          },
+        },
+      });
+      res.status(200).json({
+        message: "Image Unliked Successfully",
       });
       return;
     }
@@ -123,7 +146,7 @@ export const UpdateimageLikes = expressAsyncHandler(async (req, res) => {
       return;
     }
     res.status(200).json({
-      message: "Likes Updated",
+      message: "Image Updated Successfully",
       likes,
     });
   } catch (error) {
@@ -148,9 +171,6 @@ export const UpdateimageComments = expressAsyncHandler(async (req, res) => {
         imageUrl: imageUrl,
         userId: userId,
       },
-      // include: {
-      //   user: true
-      // }
     });
     if (!comment) {
       res.status(404).json({

@@ -4,7 +4,7 @@ import {
   VerifyUser,
   LoginUser,
   RegisterUser,
-  UserDashboard,
+  AdminDashboard,
   Uploadimage,
   GetAllUsers,
   UserProfilePublic,
@@ -15,6 +15,7 @@ import {
   AddToCollection,
   SendUserMessage,
   UserFollow,
+  AdminLikes,
 } from "../controllers/userController";
 import multer from "multer";
 import { v2 as cloudinary } from "cloudinary";
@@ -43,7 +44,8 @@ const upload = multer({ storage });
 userRouter.get("/verify-email", VerifyUser);
 userRouter.get("/get-users", GetAllUsers);
 userRouter.get("/profile/:id", UserProfilePublic);
-userRouter.get("/dashboard", validateToken, UserDashboard);
+userRouter.get("/dashboard", validateToken, AdminDashboard);
+userRouter.get("/admin-likes", validateToken, AdminLikes);
 userRouter.get("/get-collections", GetUserCollections);
 
 userRouter.post("/register", RegisterUser);
