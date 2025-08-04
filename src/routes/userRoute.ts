@@ -11,11 +11,12 @@ import {
   UserProfileEdit,
   UserAvatarEdit,
   CreateUserCollection,
-  GetUserCollections,
+  AdminCollections,
   AddToCollection,
   SendUserMessage,
-  UserFollow,
+  // UserFollow,
   AdminLikes,
+  GetCollections,
 } from "../controllers/userController";
 import multer from "multer";
 import { v2 as cloudinary } from "cloudinary";
@@ -44,9 +45,10 @@ const upload = multer({ storage });
 userRouter.get("/verify-email", VerifyUser);
 userRouter.get("/get-users", GetAllUsers);
 userRouter.get("/profile/:id", UserProfilePublic);
+userRouter.get("/get-collections", GetCollections);
 userRouter.get("/dashboard", validateToken, AdminDashboard);
 userRouter.get("/admin-likes", validateToken, AdminLikes);
-userRouter.get("/get-collections", GetUserCollections);
+userRouter.get("/admin-collections", validateToken, AdminCollections);
 
 userRouter.post("/register", RegisterUser);
 userRouter.post("/login", LoginUser);
@@ -54,7 +56,7 @@ userRouter.post("/upload", validateToken, upload.single("image"), Uploadimage);
 userRouter.post("/create-collection", CreateUserCollection);
 userRouter.post("/update-collection", AddToCollection);
 userRouter.post("/send-message", SendUserMessage);
-userRouter.post("/follow-user", UserFollow);
+// userRouter.post("/follow-user", UserFollow);
 
 userRouter.patch("/profile-edit", UserProfileEdit);
 userRouter.patch(

@@ -259,8 +259,8 @@ export const AdminDashboard = expressAsyncHandler(
           images: true,
           collections: true,
           likes: true,
-          userIsFollowedBy: true,
-          userIsFollowing: true,
+          // userIsFollowedBy: true,
+          // userIsFollowing: true,
         },
       });
 
@@ -420,7 +420,7 @@ export const UserProfilePublic = expressAsyncHandler(async (req, res) => {
 
     const user = await prisma.user.findUnique({
       where: { id: req.params.id },
-      include: { images: true, userIsFollowing: true, userIsFollowedBy: true },
+      include: { images: true },
     });
 
     if (!user) {
@@ -434,7 +434,7 @@ export const UserProfilePublic = expressAsyncHandler(async (req, res) => {
   } catch (error) {
     console.error("User info error:", error);
     res.status(500).json({
-      message: "Internal server error",
+      message: error,
     });
   }
 });
@@ -513,8 +513,8 @@ export const Uploadimage = expressAsyncHandler(async (req, res) => {
 
 /////////////////////////////////////////////////////////////////////////////////////
 
-// Get user collections
-export const GetUserCollections = expressAsyncHandler(async (req, res) => {
+// Get collections
+export const GetCollections = expressAsyncHandler(async (req, res) => {
   try {
     const collection = await prisma.collection.findMany({
       include: {
@@ -535,6 +535,47 @@ export const GetUserCollections = expressAsyncHandler(async (req, res) => {
     console.log(error);
   }
 });
+
+/////////////////////////////////////////////////////////////////////////////////////
+
+// Get admin collections
+export const AdminCollections = expressAsyncHandler(
+  async (req: AuthenticatedRequest, res) => {
+    try {
+      if (!req.user?.id) {
+        res.status(401).json({
+          message: "Unauthorized",
+        });
+        return;
+      }
+      const user = await prisma.user.findUnique({
+        where: { id: req.user.id },
+      });
+
+      if (!user) {
+        res.status(404).json({
+          message: "User not found",
+        });
+        return;
+      }
+      const collections = await prisma.collection.findMany({
+        where: { userId: user.id },
+        include: {
+          images: {
+            include: { user: true },
+          },
+        },
+      });
+
+      res.status(200).json(collections);
+    } catch (error) {
+      console.error("User info error:", error);
+      res.status(500).json({
+        message: "Internal server error",
+      });
+    }
+  }
+);
 
 /////////////////////////////////////////////////////////////////////////////////////
 
@@ -602,18 +643,18 @@ export const AddToCollection = expressAsyncHandler(async (req, res) => {
 /////////////////////////////////////////////////////////////////////////////////////
 
 // User Follow Functionality
-export const UserFollow = expressAsyncHandler(async (req, res) => {
-  const userIsFollowingId = req.body.userIsFollowingId;
-  // const userIsFollowedById = req.body.userIsFollowedById;
+// export const UserFollow = expressAsyncHandler(async (req, res) => {
+//   const userIsFollowingId = req.body.userIsFollowingId;
+//   // const userIsFollowedById = req.body.userIsFollowedById;
 
-  try {
-    await prisma.following.create({
-      data: {
-        userIsFollowingId: userIsFollowingId,
-      },
-    });
-    console.log("Success");
-  } catch (error) {
-    console.log(error);
-  }
-});
+//   try {
+//     await prisma.following.create({
+//       data: {
+//         userIsFollowingId: userIsFollowingId,
+//       },
+//     });
+//     console.log("Success");
+//   } catch (error) {
+//     console.log(error);
+//   }
+// });
