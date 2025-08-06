@@ -44,10 +44,11 @@ model Image {
   collections   Collection[] @relation(fields: [collectionIds], references: [id])
   collectionIds String[]     @db.ObjectId
 
-  comments  Comment[] @relation("imageComments")
-  url       String
-  published Boolean   @default(false)
-  addedAt   DateTime  @default(now())
+  comments          Comment[] @relation("imageComments")
+  url               String
+  published         Boolean   @default(false)
+  addedAt           DateTime  @default(now())
+  addedToCollection DateTime?
 
   @@unique([id, url])
 }

@@ -563,6 +563,7 @@ export const AdminCollections = expressAsyncHandler(
         include: {
           images: {
             include: { user: true },
+            orderBy: { addedToCollection: "asc" },
           },
         },
       });
@@ -599,6 +600,16 @@ export const CreateUserCollection = expressAsyncHandler(async (req, res) => {
         user: true,
       },
     });
+
+    // Manually set the date to the image (mongodb sort the array of images inside the collection auto based on the addedAt field in the Image model)
+    const date = new Date();
+    await prisma.image.update({
+      where: {
+        id: imageId,
+      },
+      data: { addedToCollection: date },
+    });
+
     res.status(200).json({
       message: "Collection Updated",
     });
@@ -618,6 +629,34 @@ export const AddToCollection = expressAsyncHandler(async (req, res) => {
   const imageId = req.body.imageId;
 
   try {
+    const collectionExist = await prisma.collection.findUnique({
+      where: {
+        id: id,
+        images: {
+          some: { id: imageId },
+        },
+      },
+    });
+    if (collectionExist) {
+      await prisma.collection.update({
+        where: {
+          id: id,
+        },
+
+        data: {
+          images: {
+            disconnect: {
+              id: imageId,
+            },
+          },
+        },
+      });
+      res.status(200).json({
+        message: "Image Removed Successfully From Collection",
+      });
+      return;
+    }
+
     await prisma.collection.update({
       where: {
         id: id,
@@ -627,8 +666,17 @@ export const AddToCollection = expressAsyncHandler(async (req, res) => {
           connect: [{ id: imageId }],
         },
       },
-      include: { images: true, user: true },
     });
+
+    // Manually set the date to the image (mongodb sort them auto based on the addedAt field in the Image model)
+    const date = new Date();
+    await prisma.image.update({
+      where: {
+        id: imageId,
+      },
+      data: { addedToCollection: date },
+    });
+
     res.status(200).json({
       message: "Collection Updated",
     });
