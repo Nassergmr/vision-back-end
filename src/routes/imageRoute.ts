@@ -5,12 +5,14 @@ import {
   Updateimage,
   UpdateimageComments,
   GetImageLikes,
+  GetImageComments,
 } from "../controllers/imageController";
 
 const imageRouter = express.Router();
 
 imageRouter.get("/get-images", GetPublishedimages);
-imageRouter.get("/get-likes", GetImageLikes);
+imageRouter.get("/get-likes/:id", GetImageLikes);
+imageRouter.get("/get-comments/:id", GetImageComments);
 
 imageRouter.post("/update-image", Updateimage);
 imageRouter.post("/update-like", UpdateimageLikes);

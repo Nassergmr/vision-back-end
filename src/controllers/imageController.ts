@@ -14,8 +14,8 @@ export const GetPublishedimages = expressAsyncHandler(async (req, res) => {
       },
       include: {
         user: true,
-        likes: true,
-        comments: true,
+        // likes: true,
+        // comments: true,
       },
     });
     if (!image) {
@@ -89,11 +89,49 @@ export const Updateimage = expressAsyncHandler(async (req, res) => {
 
 // Get image likes
 export const GetImageLikes = expressAsyncHandler(async (req, res) => {
+  const imageId = req.params.id;
   try {
-    const likes = await prisma.like.findMany();
+    const image = await prisma.image.findUnique({
+      where: { id: imageId },
+      select: { likes: true },
+    });
+
+    if (!image) {
+      res.status(404).json({
+        message: "No image found",
+      });
+      return;
+    }
 
     res.status(200).json({
-      likes,
+      image,
+    });
+  } catch (error) {
+    console.log(error);
+  }
+});
+
+//////////////////////////////////////////////////////////////////////////////
+
+// Get image comments
+export const GetImageComments = expressAsyncHandler(async (req, res) => {
+  const imageId = req.params.id;
+  try {
+    // const image = await prisma.image.findUnique({
+    //   where: { id: imageId },
+    //   select: {
+    //     comments: true,
+
+    //     // user: { select: { avatar: true, firstName: true, lastName: true } },
+    //   },
+    // });
+    const comments = await prisma.comment.findMany({
+      where: { imageId: imageId },
+      include: { user: true },
+    });
+
+    res.status(200).json({
+      comments,
     });
   } catch (error) {
     console.log(error);

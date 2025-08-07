@@ -520,6 +520,9 @@ export const GetCollections = expressAsyncHandler(async (req, res) => {
       include: {
         images: true,
       },
+      orderBy: {
+        createdAt: "desc",
+      },
     });
     if (!collection) {
       res.status(404).json({
@@ -560,6 +563,7 @@ export const AdminCollections = expressAsyncHandler(
       }
       const collections = await prisma.collection.findMany({
         where: { userId: user.id },
+        orderBy: { createdAt: "desc" },
         include: {
           images: {
             include: { user: true },

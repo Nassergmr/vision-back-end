@@ -87,4 +87,5 @@ model Collection {
 
   images    Image[]  @relation(fields: [imagesIds], references: [id])
   imagesIds String[] @db.ObjectId
+  createdAt DateTime @default(now())
 }
