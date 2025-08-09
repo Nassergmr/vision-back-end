@@ -14,8 +14,6 @@ export const GetPublishedimages = expressAsyncHandler(async (req, res) => {
       },
       include: {
         user: true,
-        // likes: true,
-        // comments: true,
       },
     });
     if (!image) {
@@ -117,14 +115,6 @@ export const GetImageLikes = expressAsyncHandler(async (req, res) => {
 export const GetImageComments = expressAsyncHandler(async (req, res) => {
   const imageId = req.params.id;
   try {
-    // const image = await prisma.image.findUnique({
-    //   where: { id: imageId },
-    //   select: {
-    //     comments: true,
-
-    //     // user: { select: { avatar: true, firstName: true, lastName: true } },
-    //   },
-    // });
     const comments = await prisma.comment.findMany({
       where: { imageId: imageId },
       include: { user: true },
@@ -132,6 +122,25 @@ export const GetImageComments = expressAsyncHandler(async (req, res) => {
 
     res.status(200).json({
       comments,
+    });
+  } catch (error) {
+    console.log(error);
+  }
+});
+
+//////////////////////////////////////////////////////////////////////////////
+
+// Get image views
+export const GetImageViews = expressAsyncHandler(async (req, res) => {
+  const imageId = req.params.id;
+  try {
+    const views = await prisma.image.findUnique({
+      where: { id: imageId },
+      select: { views: true },
+    });
+
+    res.status(200).json({
+      views,
     });
   } catch (error) {
     console.log(error);
@@ -219,6 +228,34 @@ export const UpdateimageComments = expressAsyncHandler(async (req, res) => {
     res.status(200).json({
       message: "Comment Updated",
       comment,
+    });
+  } catch (error) {
+    console.log(error);
+  }
+});
+
+//////////////////////////////////////////////////////////////////////////////
+
+// Update image views
+export const UpdateImageViews = expressAsyncHandler(async (req, res) => {
+  const imageId = req.body.imageId;
+
+  try {
+    const image = await prisma.image.update({
+      where: { id: imageId },
+      data: {
+        views: { increment: 1 },
+      },
+    });
+    if (!image) {
+      res.status(404).json({
+        message: "No image found",
+      });
+      return;
+    }
+    res.status(200).json({
+      message: "Image Updated",
+      image,
     });
   } catch (error) {
     console.log(error);
