@@ -149,6 +149,25 @@ export const GetImageViews = expressAsyncHandler(async (req, res) => {
 
 //////////////////////////////////////////////////////////////////////////////
 
+// Get image downloads
+export const GetImageDownloads = expressAsyncHandler(async (req, res) => {
+  const imageId = req.params.id;
+  try {
+    const downloads = await prisma.image.findUnique({
+      where: { id: imageId },
+      select: { downloads: true },
+    });
+
+    res.status(200).json({
+      downloads,
+    });
+  } catch (error) {
+    console.log(error);
+  }
+});
+
+//////////////////////////////////////////////////////////////////////////////
+
 // Update image likes
 export const UpdateimageLikes = expressAsyncHandler(async (req, res) => {
   const imageId = req.body.imageId;
@@ -245,6 +264,34 @@ export const UpdateImageViews = expressAsyncHandler(async (req, res) => {
       where: { id: imageId },
       data: {
         views: { increment: 1 },
+      },
+    });
+    if (!image) {
+      res.status(404).json({
+        message: "No image found",
+      });
+      return;
+    }
+    res.status(200).json({
+      message: "Image Updated",
+      image,
+    });
+  } catch (error) {
+    console.log(error);
+  }
+});
+
+//////////////////////////////////////////////////////////////////////////////
+
+// Update image downloads
+export const UpdateImageDownloads = expressAsyncHandler(async (req, res) => {
+  const imageId = req.body.imageId;
+
+  try {
+    const image = await prisma.image.update({
+      where: { id: imageId },
+      data: {
+        downloads: { increment: 1 },
       },
     });
     if (!image) {

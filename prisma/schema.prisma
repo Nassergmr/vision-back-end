@@ -9,27 +9,26 @@ datasource db {
 }
 
 model User {
-  id          String       @id @default(auto()) @map("_id") @db.ObjectId
-  firstName   String
-  lastName    String
-  email       String       @unique
-  password    String
-  avatar      String?
-  bio         String?
-  location    String?
-  website     String?
-  facebook    String?
-  instagram   String?
-  youtube     String?
-  tiktok      String?
-  images      Image[]      @relation("userImages")
-  likes       Like[]       @relation("userLikes")
-  collections Collection[] @relation("userCollections")
-  comments    Comment[]    @relation("userComments")
-
-  createdAt               DateTime  @default(now())
-  updatedAt               DateTime  @updatedAt
-  isVerified              Boolean   @default(false)
+  id                      String       @id @default(auto()) @map("_id") @db.ObjectId
+  firstName               String
+  lastName                String
+  email                   String       @unique
+  password                String
+  avatar                  String?
+  bio                     String?
+  location                String?
+  website                 String?
+  facebook                String?
+  instagram               String?
+  youtube                 String?
+  tiktok                  String?
+  images                  Image[]      @relation("userImages")
+  likes                   Like[]       @relation("userLikes")
+  collections             Collection[] @relation("userCollections")
+  comments                Comment[]    @relation("userComments")
+  createdAt               DateTime     @default(now())
+  updatedAt               DateTime     @updatedAt
+  isVerified              Boolean      @default(false)
   verificationToken       String?
   verificationTokenExpiry DateTime?
 }
@@ -49,6 +48,7 @@ model Image {
   title             String?
   location          String?
   views             Int       @default(0)
+  downloads         Int       @default(0)
   url               String
   published         Boolean   @default(false)
   addedAt           DateTime  @default(now())
@@ -80,6 +80,8 @@ model Comment {
   image    Image  @relation(fields: [imageId], references: [id], name: "imageComments")
   imageId  String @db.ObjectId
   imageUrl String
+
+  createdAt DateTime @default(now())
 }
 
 model Collection {
@@ -91,5 +93,6 @@ model Collection {
 
   images    Image[]  @relation(fields: [imagesIds], references: [id])
   imagesIds String[] @db.ObjectId
+
   createdAt DateTime @default(now())
 }

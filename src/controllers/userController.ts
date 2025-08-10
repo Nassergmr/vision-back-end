@@ -259,8 +259,6 @@ export const AdminDashboard = expressAsyncHandler(
           images: true,
           collections: true,
           likes: true,
-          // userIsFollowedBy: true,
-          // userIsFollowing: true,
         },
       });
 

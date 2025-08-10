@@ -14,7 +14,6 @@ import {
   AdminCollections,
   AddToCollection,
   SendUserMessage,
-  // UserFollow,
   AdminLikes,
   GetCollections,
 } from "../controllers/userController";
@@ -56,7 +55,6 @@ userRouter.post("/upload", validateToken, upload.single("image"), Uploadimage);
 userRouter.post("/create-collection", CreateUserCollection);
 userRouter.post("/update-collection", AddToCollection);
 userRouter.post("/send-message", SendUserMessage);
-// userRouter.post("/follow-user", UserFollow);
 
 userRouter.patch("/profile-edit", UserProfileEdit);
 userRouter.patch(
