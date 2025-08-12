@@ -242,8 +242,8 @@ export const LoginUser = expressAsyncHandler(async (req, res) => {
 
 /////////////////////////////////////////////////////////////////////////////////////
 
-// Get admin dashboard
-export const AdminDashboard = expressAsyncHandler(
+// Get admin data
+export const GetAdminData = expressAsyncHandler(
   async (req: AuthenticatedRequest, res) => {
     try {
       if (!req.user?.id) {
@@ -282,7 +282,7 @@ export const AdminDashboard = expressAsyncHandler(
 /////////////////////////////////////////////////////////////////////////////////////
 
 // Get admin likes
-export const AdminLikes = expressAsyncHandler(
+export const GetAdminLikes = expressAsyncHandler(
   async (req: AuthenticatedRequest, res) => {
     try {
       if (!req.user?.id) {
@@ -313,6 +313,172 @@ export const AdminLikes = expressAsyncHandler(
     }
   }
 );
+
+/////////////////////////////////////////////////////////////////////////////////////
+
+// Get admin collections
+export const GetAdminCollections = expressAsyncHandler(
+  async (req: AuthenticatedRequest, res) => {
+    try {
+      if (!req.user?.id) {
+        res.status(401).json({
+          message: "Unauthorized",
+        });
+        return;
+      }
+      const user = await prisma.user.findUnique({
+        where: { id: req.user.id },
+      });
+
+      if (!user) {
+        res.status(404).json({
+          message: "User not found",
+        });
+        return;
+      }
+      const collections = await prisma.collection.findMany({
+        where: { userId: user.id },
+        orderBy: { createdAt: "desc" },
+        include: {
+          images: {
+            include: { user: true },
+            orderBy: { addedToCollection: "asc" },
+          },
+        },
+      });
+
+      res.status(200).json(collections);
+    } catch (error) {
+      console.error("User info error:", error);
+      res.status(500).json({
+        message: "Internal server error",
+      });
+    }
+  }
+);
+
+/////////////////////////////////////////////////////////////////////////////////////
+
+// Get admin images
+export const GetAdminImages = expressAsyncHandler(
+  async (req: AuthenticatedRequest, res) => {
+    try {
+      if (!req.user?.id) {
+        res.status(401).json({
+          message: "Unauthorized",
+        });
+        return;
+      }
+      const user = await prisma.user.findUnique({
+        where: { id: req.user.id },
+      });
+
+      if (!user) {
+        res.status(404).json({
+          message: "User not found",
+        });
+        return;
+      }
+      const images = await prisma.image.findMany({
+        where: { userId: user.id },
+        orderBy: { addedAt: "asc" },
+      });
+
+      res.status(200).json(images);
+    } catch (error) {
+      console.error("User info error:", error);
+      res.status(500).json({
+        message: "Internal server error",
+      });
+    }
+  }
+);
+
+/////////////////////////////////////////////////////////////////////////////////////
+
+// Get user profile (public)
+export const UserProfilePublic = expressAsyncHandler(async (req, res) => {
+  try {
+    if (!req.params?.id) {
+      res.status(404).json({
+        message: "No user Found",
+      });
+      return;
+    }
+
+    const user = await prisma.user.findUnique({
+      where: { id: req.params.id },
+      include: { images: true },
+    });
+
+    if (!user) {
+      res.status(404).json({
+        message: "User not found",
+      });
+      return;
+    }
+
+    res.status(200).json(user);
+  } catch (error) {
+    console.error("User info error:", error);
+    res.status(500).json({
+      message: error,
+    });
+  }
+});
+
+/////////////////////////////////////////////////////////////////////////////////////
+
+// Get all users
+export const GetAllUsers = expressAsyncHandler(async (req, res) => {
+  try {
+    const user = await prisma.user.findMany({
+      include: {
+        likes: true,
+      },
+    });
+    if (!user) {
+      res.status(404).json({
+        message: "No users found",
+      });
+      return;
+    }
+    res.status(200).json({
+      message: "Users found",
+      user,
+    });
+  } catch (error) {
+    console.log(error);
+  }
+});
+
+/////////////////////////////////////////////////////////////////////////////////////
+
+// Get collections
+export const GetCollections = expressAsyncHandler(async (req, res) => {
+  try {
+    const collection = await prisma.collection.findMany({
+      include: {
+        images: true,
+      },
+      orderBy: {
+        createdAt: "desc",
+      },
+    });
+    if (!collection) {
+      res.status(404).json({
+        message: "No collection found",
+      });
+      return;
+    }
+    res.status(200).json({
+      message: "Collection Updated",
+      collection,
+    });
+  } catch (error) {
+    console.log(error);
+  }
+});
 
 /////////////////////////////////////////////////////////////////////////////////////
 
@@ -406,64 +572,6 @@ export const UserAvatarEdit = expressAsyncHandler(async (req, res) => {
 
 /////////////////////////////////////////////////////////////////////////////////////
 
-// Get user profile (public)
-export const UserProfilePublic = expressAsyncHandler(async (req, res) => {
-  try {
-    if (!req.params?.id) {
-      res.status(404).json({
-        message: "No user Found",
-      });
-      return;
-    }
-
-    const user = await prisma.user.findUnique({
-      where: { id: req.params.id },
-      include: { images: true },
-    });
-
-    if (!user) {
-      res.status(404).json({
-        message: "User not found",
-      });
-      return;
-    }
-
-    res.status(200).json(user);
-  } catch (error) {
-    console.error("User info error:", error);
-    res.status(500).json({
-      message: error,
-    });
-  }
-});
-
-/////////////////////////////////////////////////////////////////////////////////////
-
-// Get all users
-export const GetAllUsers = expressAsyncHandler(async (req, res) => {
-  try {
-    const user = await prisma.user.findMany({
-      include: {
-        likes: true,
-      },
-    });
-    if (!user) {
-      res.status(404).json({
-        message: "No users found",
-      });
-      return;
-    }
-    res.status(200).json({
-      message: "Users found",
-      user,
-    });
-  } catch (error) {
-    console.log(error);
-  }
-});
-
-/////////////////////////////////////////////////////////////////////////////////////
-
 // Image upload
 export const Uploadimage = expressAsyncHandler(async (req, res) => {
   try {
@@ -508,77 +616,6 @@ export const Uploadimage = expressAsyncHandler(async (req, res) => {
     console.log(error);
   }
 });
-
-/////////////////////////////////////////////////////////////////////////////////////
-
-// Get collections
-export const GetCollections = expressAsyncHandler(async (req, res) => {
-  try {
-    const collection = await prisma.collection.findMany({
-      include: {
-        images: true,
-      },
-      orderBy: {
-        createdAt: "desc",
-      },
-    });
-    if (!collection) {
-      res.status(404).json({
-        message: "No collection found",
-      });
-      return;
-    }
-    res.status(200).json({
-      message: "Collection Updated",
-      collection,
-    });
-  } catch (error) {
-    console.log(error);
-  }
-});
-
-/////////////////////////////////////////////////////////////////////////////////////
-
-// Get admin collections
-export const AdminCollections = expressAsyncHandler(
-  async (req: AuthenticatedRequest, res) => {
-    try {
-      if (!req.user?.id) {
-        res.status(401).json({
-          message: "Unauthorized",
-        });
-        return;
-      }
-      const user = await prisma.user.findUnique({
-        where: { id: req.user.id },
-      });
-
-      if (!user) {
-        res.status(404).json({
-          message: "User not found",
-        });
-        return;
-      }
-      const collections = await prisma.collection.findMany({
-        where: { userId: user.id },
-        orderBy: { createdAt: "desc" },
-        include: {
-          images: {
-            include: { user: true },
-            orderBy: { addedToCollection: "asc" },
-          },
-        },
-      });
-
-      res.status(200).json(collections);
-    } catch (error) {
-      console.error("User info error:", error);
-      res.status(500).json({
-        message: "Internal server error",
-      });
-    }
-  }
-);
 
 /////////////////////////////////////////////////////////////////////////////////////
 

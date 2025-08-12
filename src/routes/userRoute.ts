@@ -4,18 +4,19 @@ import {
   VerifyUser,
   LoginUser,
   RegisterUser,
-  AdminDashboard,
+  GetAdminData,
+  GetAdminLikes,
+  GetAdminCollections,
   Uploadimage,
   GetAllUsers,
   UserProfilePublic,
   UserProfileEdit,
   UserAvatarEdit,
   CreateUserCollection,
-  AdminCollections,
   AddToCollection,
   SendUserMessage,
-  AdminLikes,
   GetCollections,
+  GetAdminImages,
 } from "../controllers/userController";
 import multer from "multer";
 import { v2 as cloudinary } from "cloudinary";
@@ -45,9 +46,10 @@ userRouter.get("/verify-email", VerifyUser);
 userRouter.get("/get-users", GetAllUsers);
 userRouter.get("/profile/:id", UserProfilePublic);
 userRouter.get("/get-collections", GetCollections);
-userRouter.get("/dashboard", validateToken, AdminDashboard);
-userRouter.get("/admin-likes", validateToken, AdminLikes);
-userRouter.get("/admin-collections", validateToken, AdminCollections);
+userRouter.get("/get-admin-data", validateToken, GetAdminData);
+userRouter.get("/get-admin-likes", validateToken, GetAdminLikes);
+userRouter.get("/get-admin-collections", validateToken, GetAdminCollections);
+userRouter.get("/get-admin-images", validateToken, GetAdminImages);
 
 userRouter.post("/register", RegisterUser);
 userRouter.post("/login", LoginUser);

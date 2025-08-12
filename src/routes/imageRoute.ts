@@ -1,7 +1,7 @@
 import express from "express";
 import {
   GetPublishedimages,
-  UpdateimageLikes,
+  UpdateImageLikes,
   Updateimage,
   UpdateimageComments,
   GetImageLikes,
@@ -21,7 +21,7 @@ imageRouter.get("/get-views/:id", GetImageViews);
 imageRouter.get("/get-downloads/:id", GetImageDownloads);
 
 imageRouter.post("/update-image", Updateimage);
-imageRouter.post("/update-like", UpdateimageLikes);
+imageRouter.post("/update-like", UpdateImageLikes);
 imageRouter.post("/update-comments", UpdateimageComments);
 imageRouter.post("/update-views", UpdateImageViews);
 imageRouter.post("/update-downloads", UpdateImageDownloads);

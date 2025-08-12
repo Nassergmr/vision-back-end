@@ -169,7 +169,7 @@ export const GetImageDownloads = expressAsyncHandler(async (req, res) => {
 //////////////////////////////////////////////////////////////////////////////
 
 // Update image likes
-export const UpdateimageLikes = expressAsyncHandler(async (req, res) => {
+export const UpdateImageLikes = expressAsyncHandler(async (req, res) => {
   const imageId = req.body.imageId;
   const imageUrl = req.body.imageUrl;
   const userId = req.body.userId;
