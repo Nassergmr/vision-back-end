@@ -17,6 +17,7 @@ import {
   SendUserMessage,
   GetCollections,
   GetAdminImages,
+  GetUserImages,
 } from "../controllers/userController";
 import multer from "multer";
 import { v2 as cloudinary } from "cloudinary";
@@ -45,6 +46,7 @@ const upload = multer({ storage });
 userRouter.get("/verify-email", VerifyUser);
 userRouter.get("/get-users", GetAllUsers);
 userRouter.get("/profile/:id", UserProfilePublic);
+userRouter.get("/get-user-images/:id", GetUserImages);
 userRouter.get("/get-collections", GetCollections);
 userRouter.get("/get-admin-data", validateToken, GetAdminData);
 userRouter.get("/get-admin-likes", validateToken, GetAdminLikes);

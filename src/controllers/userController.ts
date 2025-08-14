@@ -395,6 +395,35 @@ export const GetAdminImages = expressAsyncHandler(
 );
 
 /////////////////////////////////////////////////////////////////////////////////////
+// Get user images
+export const GetUserImages = expressAsyncHandler(async (req, res) => {
+  const id = req.params.id;
+
+  try {
+    const image = await prisma.image.findMany({
+      where: {
+        userId: id,
+      },
+      include: {
+        user: true,
+      },
+    });
+    if (!image) {
+      res.status(404).json({
+        message: "No image found",
+      });
+      return;
+    }
+    res.status(200).json({
+      message: "image found",
+      image,
+    });
+  } catch (error) {
+    console.log(error);
+  }
+});
+
+/////////////////////////////////////////////////////////////////////////////////////
 
 // Get user profile (public)
 export const UserProfilePublic = expressAsyncHandler(async (req, res) => {
