@@ -495,6 +495,7 @@ export const UserProfileEdit = expressAsyncHandler(async (req, res) => {
     instagram,
     youtube,
     tiktok,
+    messageButtonAllowed,
   } = req.body;
 
   try {
@@ -508,15 +509,16 @@ export const UserProfileEdit = expressAsyncHandler(async (req, res) => {
     const user = await prisma.user.update({
       where: { id: id },
       data: {
-        ...(firstName && { firstName }),
-        ...(lastName && { lastName }),
-        ...(bio && { bio }),
-        ...(location && { location }),
-        ...(website && { website }),
-        ...(facebook && { facebook }),
-        ...(instagram && { instagram }),
-        ...(youtube && { youtube }),
-        ...(tiktok && { tiktok }),
+        firstName,
+        lastName,
+        bio,
+        location,
+        website,
+        facebook,
+        instagram,
+        youtube,
+        tiktok,
+        messageButtonAllowed: messageButtonAllowed,
       },
     });
 
@@ -726,22 +728,3 @@ export const AddToCollection = expressAsyncHandler(async (req, res) => {
     console.log(error);
   }
 });
-
-/////////////////////////////////////////////////////////////////////////////////////
-
-// User Follow Functionality
-// export const UserFollow = expressAsyncHandler(async (req, res) => {
-//   const userIsFollowingId = req.body.userIsFollowingId;
-//   // const userIsFollowedById = req.body.userIsFollowedById;
-
-//   try {
-//     await prisma.following.create({
-//       data: {
-//         userIsFollowingId: userIsFollowingId,
-//       },
-//     });
-//     console.log("Success");
-//   } catch (error) {
-//     console.log(error);
-//   }
-// });
