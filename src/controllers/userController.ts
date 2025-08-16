@@ -359,6 +359,46 @@ export const GetAdminCollections = expressAsyncHandler(
 
 /////////////////////////////////////////////////////////////////////////////////////
 
+// Get admin single collection
+export const GetAdminCollection = expressAsyncHandler(async (req, res) => {
+  try {
+    // if (!req.user?.id) {
+    //   res.status(401).json({
+    //     message: "Unauthorized",
+    //   });
+    //   return;
+    // }
+    // const user = await prisma.user.findUnique({
+    //   where: { id: req.user.id },
+    // });
+
+    // if (!user) {
+    //   res.status(404).json({
+    //     message: "User not found",
+    //   });
+    //   return;
+    // }
+    const collection = await prisma.collection.findUnique({
+      where: { id: req.params.id },
+      include: {
+        images: {
+          include: { user: true },
+          orderBy: { addedToCollection: "asc" },
+        },
+      },
+    });
+
+    res.status(200).json(collection);
+  } catch (error) {
+    console.error("User info error:", error);
+    res.status(500).json({
+      message: "Internal server error",
+    });
+  }
+});
+
+/////////////////////////////////////////////////////////////////////////////////////
+
 // Get admin images
 export const GetAdminImages = expressAsyncHandler(
   async (req: AuthenticatedRequest, res) => {
@@ -512,7 +552,7 @@ export const GetCollections = expressAsyncHandler(async (req, res) => {
 /////////////////////////////////////////////////////////////////////////////////////
 
 // Edit user profile
-export const UserProfileEdit = expressAsyncHandler(async (req, res) => {
+export const UserprofileEdit = expressAsyncHandler(async (req, res) => {
   const {
     id,
     firstName,
