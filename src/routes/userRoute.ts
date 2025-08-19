@@ -19,6 +19,8 @@ import {
   GetAdminImages,
   GetUserImages,
   GetAdminCollection,
+  CollectionEdit,
+  CollectionDelete,
 } from "../controllers/userController";
 import multer from "multer";
 import { v2 as cloudinary } from "cloudinary";
@@ -62,12 +64,14 @@ userRouter.post("/create-collection", CreateUserCollection);
 userRouter.post("/update-collection", AddToCollection);
 userRouter.post("/send-message", SendUserMessage);
 
-userRouter.patch("/profile-edit", UserprofileEdit);
+userRouter.patch("/edit-profile", UserprofileEdit);
 userRouter.patch(
-  "/avatar-edit",
+  "/edit-avatar",
   validateToken,
   upload.single("avatar"),
   UserAvatarEdit
 );
+userRouter.patch("/edit-collection", CollectionEdit);
+userRouter.delete("/delete-collection/:id", CollectionDelete);
 
 export default userRouter;

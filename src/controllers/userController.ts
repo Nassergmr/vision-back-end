@@ -362,22 +362,6 @@ export const GetAdminCollections = expressAsyncHandler(
 // Get admin single collection
 export const GetAdminCollection = expressAsyncHandler(async (req, res) => {
   try {
-    // if (!req.user?.id) {
-    //   res.status(401).json({
-    //     message: "Unauthorized",
-    //   });
-    //   return;
-    // }
-    // const user = await prisma.user.findUnique({
-    //   where: { id: req.user.id },
-    // });
-
-    // if (!user) {
-    //   res.status(404).json({
-    //     message: "User not found",
-    //   });
-    //   return;
-    // }
     const collection = await prisma.collection.findUnique({
       where: { id: req.params.id },
       include: {
@@ -435,6 +419,7 @@ export const GetAdminImages = expressAsyncHandler(
 );
 
 /////////////////////////////////////////////////////////////////////////////////////
+
 // Get user images
 export const GetUserImages = expressAsyncHandler(async (req, res) => {
   const id = req.params.id;
@@ -643,6 +628,25 @@ export const UserAvatarEdit = expressAsyncHandler(async (req, res) => {
 
 /////////////////////////////////////////////////////////////////////////////////////
 
+// Edit user collection
+export const CollectionEdit = expressAsyncHandler(async (req, res) => {
+  try {
+    const { id, title } = req.body;
+    await prisma.collection.update({
+      where: { id: id },
+      data: { title: title },
+    });
+
+    res.status(200).json({
+      message: "collection updated successfully",
+    });
+  } catch (error) {
+    console.log(error);
+  }
+});
+
+/////////////////////////////////////////////////////////////////////////////////////
+
 // Image upload
 export const Uploadimage = expressAsyncHandler(async (req, res) => {
   try {
@@ -794,6 +798,23 @@ export const AddToCollection = expressAsyncHandler(async (req, res) => {
     res.status(500).json({
       message: error,
     });
+    console.log(error);
+  }
+});
+
+/////////////////////////////////////////////////////////////////////////////////////
+
+// Delete collection
+export const CollectionDelete = expressAsyncHandler(async (req, res) => {
+  const { id } = req.params;
+  try {
+    await prisma.collection.delete({
+      where: { id },
+    });
+    res.status(200).json({
+      message: "Collection Deleted",
+    });
+  } catch (error) {
     console.log(error);
   }
 });
