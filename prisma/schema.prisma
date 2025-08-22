@@ -26,6 +26,7 @@ model User {
   likes                   Like[]       @relation("userLikes")
   collections             Collection[] @relation("userCollections")
   comments                Comment[]    @relation("userComments")
+  downloads               Download[]   @relation("userDownloads")
   createdAt               DateTime     @default(now())
   updatedAt               DateTime     @updatedAt
   isVerified              Boolean      @default(false)
@@ -46,10 +47,13 @@ model Image {
 
   comments Comment[] @relation("imageComments")
 
-  title             String?
+  downloads Download[] @relation("imageDownloads")
+
+  title             String
   location          String?
+  tags              String[]
   views             Int       @default(0)
-  downloads         Int       @default(0)
+  downloadsCount    Int       @default(0)
   url               String
   published         Boolean   @default(false)
   addedAt           DateTime  @default(now())
@@ -96,4 +100,16 @@ model Collection {
   imagesIds String[] @db.ObjectId
 
   createdAt DateTime @default(now())
+}
+
+model Download {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+
+  user   User   @relation(fields: [userId], references: [id], name: "userDownloads")
+  userId String @db.ObjectId
+
+  image   Image  @relation(fields: [imageId], references: [id], name: "imageDownloads")
+  imageId String @db.ObjectId
+
+  @@unique([userId, imageId])
 }

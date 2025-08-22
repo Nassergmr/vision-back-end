@@ -19,8 +19,10 @@ import {
   GetAdminImages,
   GetUserImages,
   GetAdminCollection,
-  CollectionEdit,
-  CollectionDelete,
+  GetAdminLikedImages,
+  DeleteCollection,
+  EditCollection,
+  GetAdminDownloadedImages,
 } from "../controllers/userController";
 import multer from "multer";
 import { v2 as cloudinary } from "cloudinary";
@@ -53,6 +55,13 @@ userRouter.get("/get-user-images/:id", GetUserImages);
 userRouter.get("/get-collections", GetCollections);
 userRouter.get("/get-admin-data", validateToken, GetAdminData);
 userRouter.get("/get-admin-likes", validateToken, GetAdminLikes);
+userRouter.get("/get-admin-liked-images", validateToken, GetAdminLikedImages);
+userRouter.get(
+  "/get-admin-downloaded-images",
+  validateToken,
+  GetAdminDownloadedImages
+);
+
 userRouter.get("/get-admin-collections", validateToken, GetAdminCollections);
 userRouter.get("/get-admin-collection/:id", GetAdminCollection);
 userRouter.get("/get-admin-images", validateToken, GetAdminImages);
@@ -71,7 +80,7 @@ userRouter.patch(
   upload.single("avatar"),
   UserAvatarEdit
 );
-userRouter.patch("/edit-collection", CollectionEdit);
-userRouter.delete("/delete-collection/:id", CollectionDelete);
+userRouter.patch("/edit-collection", EditCollection);
+userRouter.delete("/delete-collection/:id", DeleteCollection);
 
 export default userRouter;

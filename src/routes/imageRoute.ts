@@ -8,7 +8,7 @@ import {
   GetImageComments,
   UpdateImageViews,
   GetImageViews,
-  GetImageDownloads,
+  GetImageDownloadsCount,
   UpdateImageDownloads,
 } from "../controllers/imageController";
 
@@ -18,7 +18,7 @@ imageRouter.get("/get-images", GetPublishedimages);
 imageRouter.get("/get-likes/:id", GetImageLikes);
 imageRouter.get("/get-comments/:id", GetImageComments);
 imageRouter.get("/get-views/:id", GetImageViews);
-imageRouter.get("/get-downloads/:id", GetImageDownloads);
+imageRouter.get("/get-downloads-count/:id", GetImageDownloadsCount);
 
 imageRouter.post("/update-image", Updateimage);
 imageRouter.post("/update-like", UpdateImageLikes);

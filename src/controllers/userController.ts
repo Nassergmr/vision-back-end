@@ -316,6 +316,79 @@ export const GetAdminLikes = expressAsyncHandler(
 
 /////////////////////////////////////////////////////////////////////////////////////
 
+// Get admin liked images
+export const GetAdminLikedImages = expressAsyncHandler(
+  async (req: AuthenticatedRequest, res) => {
+    try {
+      if (!req.user?.id) {
+        res.status(401).json({
+          message: "Unauthorized",
+        });
+        return;
+      }
+
+      const user = await prisma.user.findUnique({
+        where: { id: req.user.id },
+      });
+
+      const likedImages = await prisma.image.findMany({
+        where: {
+          likes: {
+            some: {
+              userId: req.user.id,
+            },
+          },
+        },
+        include: { user: true, collections: true, comments: true },
+      });
+
+      if (!user) {
+        res.status(404).json({
+          message: "User not found",
+        });
+        return;
+      }
+
+      res.status(200).json(likedImages);
+    } catch (error) {
+      console.error("error:", error);
+    }
+  }
+);
+
+/////////////////////////////////////////////////////////////////////////////////////
+
+// Get admin downloaded images
+export const GetAdminDownloadedImages = expressAsyncHandler(
+  async (req: AuthenticatedRequest, res) => {
+    try {
+      if (!req.user?.id) {
+        res.status(401).json({
+          message: "Unauthorized",
+        });
+        return;
+      }
+
+      const user = await prisma.user.findUnique({
+        where: { id: req.user.id },
+      });
+
+      const downloadedImages = await prisma.image.findMany({
+        where: { downloads: { some: { userId: req.user.id } } },
+        include: { user: true, collections: true, comments: true },
+      });
+
+      res.status(200).json({
+        downloadedImages,
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  }
+);
+
+/////////////////////////////////////////////////////////////////////////////////////
+
 // Get admin collections
 export const GetAdminCollections = expressAsyncHandler(
   async (req: AuthenticatedRequest, res) => {
@@ -629,7 +702,7 @@ export const UserAvatarEdit = expressAsyncHandler(async (req, res) => {
 /////////////////////////////////////////////////////////////////////////////////////
 
 // Edit user collection
-export const CollectionEdit = expressAsyncHandler(async (req, res) => {
+export const EditCollection = expressAsyncHandler(async (req, res) => {
   try {
     const { id, title } = req.body;
     await prisma.collection.update({
@@ -679,6 +752,8 @@ export const Uploadimage = expressAsyncHandler(async (req, res) => {
       data: {
         url: req.file.path,
         userId: user.id,
+        title: req.body.title,
+        location: req.body.location,
       },
     });
 
@@ -805,7 +880,7 @@ export const AddToCollection = expressAsyncHandler(async (req, res) => {
 /////////////////////////////////////////////////////////////////////////////////////
 
 // Delete collection
-export const CollectionDelete = expressAsyncHandler(async (req, res) => {
+export const DeleteCollection = expressAsyncHandler(async (req, res) => {
   const { id } = req.params;
   try {
     await prisma.collection.delete({
