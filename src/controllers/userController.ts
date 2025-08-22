@@ -478,7 +478,7 @@ export const GetAdminImages = expressAsyncHandler(
       }
       const images = await prisma.image.findMany({
         where: { userId: user.id },
-        orderBy: { addedAt: "asc" },
+        orderBy: { addedAt: "desc" },
       });
 
       res.status(200).json(images);

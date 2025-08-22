@@ -5,12 +5,12 @@ import dotenv from "dotenv";
 const prisma = new PrismaClient();
 dotenv.config();
 
-// Get published images
-export const GetPublishedimages = expressAsyncHandler(async (req, res) => {
+// Get Image
+export const GetImage = expressAsyncHandler(async (req, res) => {
   try {
-    const image = await prisma.image.findMany({
+    const image = await prisma.image.findUnique({
       where: {
-        published: true,
+        id: req.params.id,
       },
       include: {
         user: true,
@@ -33,39 +33,16 @@ export const GetPublishedimages = expressAsyncHandler(async (req, res) => {
 
 //////////////////////////////////////////////////////////////////////////////
 
-// Update image (draft --> published)
-export const Updateimage = expressAsyncHandler(async (req, res) => {
-  const imageId = req.body.id;
-
+// Get published images
+export const GetPublishedimages = expressAsyncHandler(async (req, res) => {
   try {
-    const isPublished = await prisma.image.findUnique({
+    const image = await prisma.image.findMany({
       where: {
-        id: imageId,
-        AND: {
-          published: true,
-        },
-      },
-    });
-
-    if (isPublished) {
-      await prisma.image.update({
-        where: {
-          id: imageId,
-        },
-        data: {
-          published: false,
-        },
-      });
-      res.status(200).json({
-        message: "Unpublished Successfully",
-      });
-      return;
-    }
-
-    const image = await prisma.image.update({
-      where: { id: imageId },
-      data: {
         published: true,
+      },
+      orderBy: { addedAt: "desc" },
+      include: {
+        user: true,
       },
     });
     if (!image) {
@@ -75,8 +52,58 @@ export const Updateimage = expressAsyncHandler(async (req, res) => {
       return;
     }
     res.status(200).json({
-      message: "Published Successfully",
+      message: "image found",
       image,
+    });
+  } catch (error) {
+    console.log(error);
+  }
+});
+
+//////////////////////////////////////////////////////////////////////////////
+
+// Update image visibility (draft --> published || published --> draft)
+export const UpdateImageVisibility = expressAsyncHandler(async (req, res) => {
+  const imageId = req.body.id;
+
+  try {
+    const isDraft = await prisma.image.findUnique({
+      where: {
+        id: imageId,
+        AND: {
+          published: false,
+        },
+      },
+    });
+
+    if (isDraft) {
+      await prisma.image.update({
+        where: {
+          id: imageId,
+        },
+        data: {
+          published: true,
+        },
+      });
+      res.status(200).json({
+        message: "Published Successfully",
+      });
+      return;
+    } else {
+      await prisma.image.update({
+        where: { id: imageId },
+        data: { published: false },
+      });
+    }
+    if (!imageId) {
+      res.status(404).json({
+        message: "No image found",
+      });
+      return;
+    }
+    res.status(200).json({
+      message: "Published Successfully",
+      imageId,
     });
   } catch (error) {
     console.log(error);
