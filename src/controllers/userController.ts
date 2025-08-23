@@ -501,6 +501,7 @@ export const GetUserImages = expressAsyncHandler(async (req, res) => {
     const image = await prisma.image.findMany({
       where: {
         userId: id,
+        published: true,
       },
       include: {
         user: true,
