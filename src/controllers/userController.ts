@@ -503,6 +503,7 @@ export const GetUserImages = expressAsyncHandler(async (req, res) => {
         userId: id,
         published: true,
       },
+      orderBy: { addedAt: "desc" },
       include: {
         user: true,
       },
