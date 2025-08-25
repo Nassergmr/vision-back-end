@@ -11,6 +11,7 @@ import {
   UpdateImageDownloads,
   UpdateImageVisibility,
   GetImage,
+  DeleteImage,
 } from "../controllers/imageController";
 
 const imageRouter = express.Router();
@@ -27,5 +28,7 @@ imageRouter.post("/update-like", UpdateImageLikes);
 imageRouter.post("/update-comments", UpdateimageComments);
 imageRouter.post("/update-views", UpdateImageViews);
 imageRouter.post("/update-downloads", UpdateImageDownloads);
+
+imageRouter.patch("/delete-image/:id", DeleteImage);
 
 export default imageRouter;

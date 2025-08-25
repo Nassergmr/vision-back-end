@@ -338,6 +338,7 @@ export const GetAdminLikedImages = expressAsyncHandler(
               userId: req.user.id,
             },
           },
+          isVisible: true,
         },
         include: { user: true, collections: true, comments: true },
       });
@@ -369,12 +370,11 @@ export const GetAdminDownloadedImages = expressAsyncHandler(
         return;
       }
 
-      // const user = await prisma.user.findUnique({
-      //   where: { id: req.user.id },
-      // });
-
       const downloadedImages = await prisma.image.findMany({
-        where: { downloads: { some: { userId: req.user.id } } },
+        where: {
+          downloads: { some: { userId: req.user.id } },
+          isVisible: true,
+        },
         include: { user: true, collections: true, comments: true },
       });
 
@@ -414,6 +414,7 @@ export const GetAdminCollections = expressAsyncHandler(
         orderBy: { createdAt: "desc" },
         include: {
           images: {
+            where: { isVisible: true },
             include: { user: true },
             orderBy: { addedToCollection: "asc" },
           },
@@ -477,7 +478,7 @@ export const GetAdminImages = expressAsyncHandler(
         return;
       }
       const images = await prisma.image.findMany({
-        where: { userId: user.id },
+        where: { userId: user.id, isVisible: true },
         orderBy: { addedAt: "desc" },
       });
 
@@ -502,6 +503,7 @@ export const GetUserImages = expressAsyncHandler(async (req, res) => {
       where: {
         userId: id,
         published: true,
+        isVisible: true,
       },
       orderBy: { addedAt: "desc" },
       include: {
@@ -532,6 +534,7 @@ export const GetPopularUserImages = expressAsyncHandler(async (req, res) => {
       where: {
         userId: id,
         published: true,
+        isVisible: true,
       },
       orderBy: { likesCount: "desc" },
       include: {

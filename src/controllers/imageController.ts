@@ -39,6 +39,7 @@ export const GetPublishedimages = expressAsyncHandler(async (req, res) => {
     const image = await prisma.image.findMany({
       where: {
         published: true,
+        isVisible: true,
       },
       orderBy: { addedAt: "desc" },
       include: {
@@ -364,6 +365,32 @@ export const UpdateImageDownloads = expressAsyncHandler(async (req, res) => {
       message: "Image Updated",
       image,
       downloadedImage,
+    });
+  } catch (error) {
+    console.log(error);
+  }
+});
+
+// Delete image
+export const DeleteImage = expressAsyncHandler(async (req, res) => {
+  const id = req.params.id;
+
+  try {
+    const image = await prisma.image.update({
+      where: { id },
+      data: {
+        isVisible: false,
+      },
+    });
+    if (!image) {
+      res.status(404).json({
+        message: "No image found",
+      });
+      return;
+    }
+    res.status(200).json({
+      message: "Image Deleted",
+      image,
     });
   } catch (error) {
     console.log(error);

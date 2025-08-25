@@ -36,7 +36,8 @@ model User {
 }
 
 model Image {
-  id     String @id @default(auto()) @map("_id") @db.ObjectId
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+
   user   User   @relation(fields: [userId], references: [id], name: "userImages")
   userId String @db.ObjectId
 
@@ -51,12 +52,14 @@ model Image {
   downloads      Download[] @relation("imageDownloads")
   downloadsCount Int        @default(0)
 
-  title             String
-  location          String?
-  tags              String[]
-  views             Int       @default(0)
-  url               String
-  published         Boolean   @default(false)
+  title     String
+  location  String?
+  tags      String[]
+  views     Int      @default(0)
+  url       String
+  published Boolean  @default(false)
+  isVisible Boolean  @default(true)
+
   addedAt           DateTime  @default(now())
   addedToCollection DateTime?
 

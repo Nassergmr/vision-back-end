@@ -74,6 +74,7 @@ userRouter.post("/create-collection", CreateUserCollection);
 userRouter.post("/update-collection", AddToCollection);
 userRouter.post("/send-message", SendUserMessage);
 
+userRouter.patch("/edit-collection", EditCollection);
 userRouter.patch("/edit-profile", UserprofileEdit);
 userRouter.patch(
   "/edit-avatar",
@@ -81,7 +82,7 @@ userRouter.patch(
   upload.single("avatar"),
   UserAvatarEdit
 );
-userRouter.patch("/edit-collection", EditCollection);
+
 userRouter.delete("/delete-collection/:id", DeleteCollection);
 
 export default userRouter;
