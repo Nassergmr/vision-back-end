@@ -23,6 +23,7 @@ import {
   DeleteCollection,
   EditCollection,
   GetAdminDownloadedImages,
+  GetPopularUserImages,
 } from "../controllers/userController";
 import multer from "multer";
 import { v2 as cloudinary } from "cloudinary";
@@ -52,6 +53,7 @@ userRouter.get("/verify-email", VerifyUser);
 userRouter.get("/get-users", GetAllUsers);
 userRouter.get("/profile/:id", UserProfilePublic);
 userRouter.get("/get-user-images/:id", GetUserImages);
+userRouter.get("/get-user-popular-images/:id", GetPopularUserImages);
 userRouter.get("/get-collections", GetCollections);
 userRouter.get("/get-admin-data", validateToken, GetAdminData);
 userRouter.get("/get-admin-likes", validateToken, GetAdminLikes);
@@ -61,7 +63,6 @@ userRouter.get(
   validateToken,
   GetAdminDownloadedImages
 );
-
 userRouter.get("/get-admin-collections", validateToken, GetAdminCollections);
 userRouter.get("/get-admin-collection/:id", GetAdminCollection);
 userRouter.get("/get-admin-images", validateToken, GetAdminImages);

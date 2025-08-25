@@ -72,24 +72,6 @@ export const RegisterUser = expressAsyncHandler(async (req, res) => {
 
 /////////////////////////////////////////////////////////////////////////////////////
 
-// Send the user message
-export const SendUserMessage = expressAsyncHandler(async (req, res) => {
-  const sender = req.body.sender;
-  const reciever = req.body.reciever;
-  const content = req.body.content;
-
-  try {
-    SendMessage(sender, reciever, content);
-    res.status(200).json({
-      message: "Message sent successfully!",
-    });
-  } catch (error) {
-    console.log(error);
-  }
-});
-
-/////////////////////////////////////////////////////////////////////////////////////
-
 // Verify the user email
 export const VerifyUser = expressAsyncHandler(async (req, res) => {
   const { token } = req.query;
@@ -242,6 +224,24 @@ export const LoginUser = expressAsyncHandler(async (req, res) => {
 
 /////////////////////////////////////////////////////////////////////////////////////
 
+// Send the user message
+export const SendUserMessage = expressAsyncHandler(async (req, res) => {
+  const sender = req.body.sender;
+  const reciever = req.body.reciever;
+  const content = req.body.content;
+
+  try {
+    SendMessage(sender, reciever, content);
+    res.status(200).json({
+      message: "Message sent successfully!",
+    });
+  } catch (error) {
+    console.log(error);
+  }
+});
+
+/////////////////////////////////////////////////////////////////////////////////////
+
 // Get admin data
 export const GetAdminData = expressAsyncHandler(
   async (req: AuthenticatedRequest, res) => {
@@ -369,9 +369,9 @@ export const GetAdminDownloadedImages = expressAsyncHandler(
         return;
       }
 
-      const user = await prisma.user.findUnique({
-        where: { id: req.user.id },
-      });
+      // const user = await prisma.user.findUnique({
+      //   where: { id: req.user.id },
+      // });
 
       const downloadedImages = await prisma.image.findMany({
         where: { downloads: { some: { userId: req.user.id } } },
@@ -504,6 +504,36 @@ export const GetUserImages = expressAsyncHandler(async (req, res) => {
         published: true,
       },
       orderBy: { addedAt: "desc" },
+      include: {
+        user: true,
+      },
+    });
+    if (!image) {
+      res.status(404).json({
+        message: "No image found",
+      });
+      return;
+    }
+    res.status(200).json({
+      message: "image found",
+      image,
+    });
+  } catch (error) {
+    console.log(error);
+  }
+});
+
+// Get most popular user images
+export const GetPopularUserImages = expressAsyncHandler(async (req, res) => {
+  const id = req.params.id;
+
+  try {
+    const image = await prisma.image.findMany({
+      where: {
+        userId: id,
+        published: true,
+      },
+      orderBy: { likesCount: "desc" },
       include: {
         user: true,
       },

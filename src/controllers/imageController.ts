@@ -220,11 +220,17 @@ export const UpdateImageLikes = expressAsyncHandler(async (req, res) => {
           },
         },
       });
+
+      await prisma.image.update({
+        where: { id: imageId },
+        data: { likesCount: { decrement: 1 } },
+      });
       res.status(200).json({
         message: "Image Unliked Successfully",
       });
       return;
     }
+
     const likes = await prisma.like.create({
       data: {
         imageId: imageId,
@@ -232,6 +238,11 @@ export const UpdateImageLikes = expressAsyncHandler(async (req, res) => {
         userId: userId,
       },
     });
+    await prisma.image.update({
+      where: { id: imageId },
+      data: { likesCount: { increment: 1 } },
+    });
+
     if (!likes) {
       res.status(404).json({
         message: "No likes found",

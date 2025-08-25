@@ -40,20 +40,21 @@ model Image {
   user   User   @relation(fields: [userId], references: [id], name: "userImages")
   userId String @db.ObjectId
 
-  likes Like[] @relation("imageLikes")
+  likes      Like[] @relation("imageLikes")
+  likesCount Int    @default(0)
 
   collections   Collection[] @relation(fields: [collectionIds], references: [id])
   collectionIds String[]     @db.ObjectId
 
   comments Comment[] @relation("imageComments")
 
-  downloads Download[] @relation("imageDownloads")
+  downloads      Download[] @relation("imageDownloads")
+  downloadsCount Int        @default(0)
 
   title             String
   location          String?
   tags              String[]
   views             Int       @default(0)
-  downloadsCount    Int       @default(0)
   url               String
   published         Boolean   @default(false)
   addedAt           DateTime  @default(now())
