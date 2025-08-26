@@ -442,6 +442,7 @@ export const GetAdminCollection = expressAsyncHandler(async (req, res) => {
         images: {
           include: { user: true },
           orderBy: { addedToCollection: "asc" },
+          where: { isVisible: true },
         },
       },
     });
