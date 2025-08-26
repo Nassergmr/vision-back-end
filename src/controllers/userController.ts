@@ -256,7 +256,7 @@ export const GetAdminData = expressAsyncHandler(
       const user = await prisma.user.findUnique({
         where: { id: req.user.id },
         include: {
-          images: true,
+          images: { where: { isVisible: true } },
           collections: true,
           likes: true,
         },
@@ -525,6 +525,8 @@ export const GetUserImages = expressAsyncHandler(async (req, res) => {
     console.log(error);
   }
 });
+
+/////////////////////////////////////////////////////////////////////////////////////
 
 // Get most popular user images
 export const GetPopularUserImages = expressAsyncHandler(async (req, res) => {
