@@ -1,6 +1,6 @@
 import express from "express";
 import {
-  GetPublishedimages,
+  GetPublishedImages,
   UpdateImageLikes,
   UpdateimageComments,
   GetImageLikes,
@@ -12,12 +12,14 @@ import {
   UpdateImageVisibility,
   GetImage,
   DeleteImage,
+  GetPopularImages,
 } from "../controllers/imageController";
 
 const imageRouter = express.Router();
 
 imageRouter.get("/get-image/:id", GetImage);
-imageRouter.get("/get-images", GetPublishedimages);
+imageRouter.get("/get-images", GetPublishedImages);
+imageRouter.get("/get-popular-images", GetPopularImages);
 imageRouter.get("/get-likes/:id", GetImageLikes);
 imageRouter.get("/get-comments/:id", GetImageComments);
 imageRouter.get("/get-views/:id", GetImageViews);

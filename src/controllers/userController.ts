@@ -281,6 +281,41 @@ export const GetAdminData = expressAsyncHandler(
 
 /////////////////////////////////////////////////////////////////////////////////////
 
+// Get admin avatar
+export const GetAdminAvatar = expressAsyncHandler(
+  async (req: AuthenticatedRequest, res) => {
+    try {
+      if (!req.user?.id) {
+        res.status(401).json({
+          message: "Unauthorized",
+        });
+        return;
+      }
+
+      const user = await prisma.user.findUnique({
+        where: { id: req.user.id },
+        select: { avatar: true },
+      });
+
+      if (!user) {
+        res.status(404).json({
+          message: "User not found",
+        });
+        return;
+      }
+
+      res.status(200).json(user);
+    } catch (error) {
+      console.error("User info error:", error);
+      res.status(500).json({
+        message: "Internal server error",
+      });
+    }
+  }
+);
+
+/////////////////////////////////////////////////////////////////////////////////////
+
 // Get admin likes
 export const GetAdminLikes = expressAsyncHandler(
   async (req: AuthenticatedRequest, res) => {

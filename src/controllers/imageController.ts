@@ -34,7 +34,7 @@ export const GetImage = expressAsyncHandler(async (req, res) => {
 //////////////////////////////////////////////////////////////////////////////
 
 // Get published images
-export const GetPublishedimages = expressAsyncHandler(async (req, res) => {
+export const GetPublishedImages = expressAsyncHandler(async (req, res) => {
   try {
     const image = await prisma.image.findMany({
       where: {
@@ -42,6 +42,36 @@ export const GetPublishedimages = expressAsyncHandler(async (req, res) => {
         isVisible: true,
       },
       orderBy: { addedAt: "desc" },
+      include: {
+        user: true,
+      },
+    });
+    if (!image) {
+      res.status(404).json({
+        message: "No image found",
+      });
+      return;
+    }
+    res.status(200).json({
+      message: "image found",
+      image,
+    });
+  } catch (error) {
+    console.log(error);
+  }
+});
+
+//////////////////////////////////////////////////////////////////////////////
+
+// Get popular images
+export const GetPopularImages = expressAsyncHandler(async (req, res) => {
+  try {
+    const image = await prisma.image.findMany({
+      where: {
+        published: true,
+        isVisible: true,
+      },
+      orderBy: { likesCount: "desc" },
       include: {
         user: true,
       },

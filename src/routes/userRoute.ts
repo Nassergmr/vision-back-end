@@ -24,6 +24,7 @@ import {
   EditCollection,
   GetAdminDownloadedImages,
   GetPopularUserImages,
+  GetAdminAvatar,
 } from "../controllers/userController";
 import multer from "multer";
 import { v2 as cloudinary } from "cloudinary";
@@ -56,6 +57,7 @@ userRouter.get("/get-user-images/:id", GetUserImages);
 userRouter.get("/get-user-popular-images/:id", GetPopularUserImages);
 userRouter.get("/get-collections", GetCollections);
 userRouter.get("/get-admin-data", validateToken, GetAdminData);
+userRouter.get("/get-admin-avatar", validateToken, GetAdminAvatar);
 userRouter.get("/get-admin-likes", validateToken, GetAdminLikes);
 userRouter.get("/get-admin-liked-images", validateToken, GetAdminLikedImages);
 userRouter.get(
