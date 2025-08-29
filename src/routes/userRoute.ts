@@ -88,3 +88,4 @@ userRouter.patch(
 userRouter.delete("/delete-collection/:id", DeleteCollection);
 
 export default userRouter;
+export { cloudinary };

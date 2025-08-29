@@ -7,6 +7,7 @@ import { Request } from "express";
 import crypto from "crypto";
 import { SendMail } from "../utils/sendMail";
 import { SendMessage } from "../utils/sendMessage";
+import { cloudinary } from "../routes/userRoute";
 
 interface AuthenticatedRequest extends Request {
   user?: {
@@ -820,13 +821,18 @@ export const Uploadimage = expressAsyncHandler(async (req, res) => {
       });
       return;
     }
+    const { path, filename } = req.file;
+
+    const result = await cloudinary.api.resource(filename);
 
     const image = await prisma.image.create({
       data: {
-        url: req.file.path,
         userId: user.id,
         title: req.body.title,
         location: req.body.location,
+        height: result.height,
+        url: path,
+        width: result.width,
       },
     });
 

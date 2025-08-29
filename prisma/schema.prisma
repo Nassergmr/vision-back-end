@@ -9,34 +9,49 @@ datasource db {
 }
 
 model User {
-  id                      String       @id @default(auto()) @map("_id") @db.ObjectId
-  firstName               String
-  lastName                String
-  email                   String       @unique
-  password                String
-  avatar                  String?
-  bio                     String?
-  location                String?
-  website                 String?
-  facebook                String?
-  instagram               String?
-  youtube                 String?
-  tiktok                  String?
-  images                  Image[]      @relation("userImages")
-  likes                   Like[]       @relation("userLikes")
-  collections             Collection[] @relation("userCollections")
-  comments                Comment[]    @relation("userComments")
-  downloads               Download[]   @relation("userDownloads")
-  createdAt               DateTime     @default(now())
-  updatedAt               DateTime     @updatedAt
-  isVerified              Boolean      @default(false)
+  id        String  @id @default(auto()) @map("_id") @db.ObjectId
+  firstName String
+  lastName  String
+  email     String  @unique
+  password  String
+  avatar    String?
+  bio       String?
+  location  String?
+  website   String?
+  facebook  String?
+  instagram String?
+  youtube   String?
+  tiktok    String?
+
+  images      Image[]      @relation("userImages")
+  likes       Like[]       @relation("userLikes")
+  collections Collection[] @relation("userCollections")
+  comments    Comment[]    @relation("userComments")
+  downloads   Download[]   @relation("userDownloads")
+
+  createdAt               DateTime  @default(now())
+  updatedAt               DateTime  @updatedAt
+  isVerified              Boolean   @default(false)
   verificationToken       String?
   verificationTokenExpiry DateTime?
-  messageButtonAllowed    Boolean      @default(true)
+  messageButtonAllowed    Boolean   @default(true)
 }
 
 model Image {
   id String @id @default(auto()) @map("_id") @db.ObjectId
+  // public_id String @unique
+
+  title             String
+  width             Int
+  height            Int
+  location          String?
+  tags              String[]
+  views             Int       @default(0)
+  url               String
+  published         Boolean   @default(false)
+  isVisible         Boolean   @default(true)
+  addedAt           DateTime  @default(now())
+  addedToCollection DateTime?
 
   user   User   @relation(fields: [userId], references: [id], name: "userImages")
   userId String @db.ObjectId
@@ -51,17 +66,6 @@ model Image {
 
   downloads      Download[] @relation("imageDownloads")
   downloadsCount Int        @default(0)
-
-  title     String
-  location  String?
-  tags      String[]
-  views     Int      @default(0)
-  url       String
-  published Boolean  @default(false)
-  isVisible Boolean  @default(true)
-
-  addedAt           DateTime  @default(now())
-  addedToCollection DateTime?
 
   @@unique([id, url])
 }

@@ -401,6 +401,8 @@ export const UpdateImageDownloads = expressAsyncHandler(async (req, res) => {
   }
 });
 
+//////////////////////////////////////////////////////////////////////////////
+
 // Delete image
 export const DeleteImage = expressAsyncHandler(async (req, res) => {
   const id = req.params.id;
