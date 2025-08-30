@@ -377,6 +377,7 @@ export const GetAdminLikedImages = expressAsyncHandler(
           isVisible: true,
         },
         include: { user: true, collections: true, comments: true },
+        orderBy: { addedToLikedImages: "desc" },
       });
 
       if (!user) {
@@ -411,6 +412,7 @@ export const GetAdminDownloadedImages = expressAsyncHandler(
           downloads: { some: { userId: req.user.id } },
           isVisible: true,
         },
+        orderBy: { addedToDownloadedImages: "desc" },
         include: { user: true, collections: true, comments: true },
       });
 
@@ -477,7 +479,7 @@ export const GetAdminCollection = expressAsyncHandler(async (req, res) => {
       include: {
         images: {
           include: { user: true },
-          orderBy: { addedToCollection: "asc" },
+          orderBy: { addedToCollection: "desc" },
           where: { isVisible: true },
         },
       },
@@ -516,6 +518,80 @@ export const GetAdminImages = expressAsyncHandler(
       }
       const images = await prisma.image.findMany({
         where: { userId: user.id, isVisible: true },
+        orderBy: { addedAt: "desc" },
+      });
+
+      res.status(200).json(images);
+    } catch (error) {
+      console.error("User info error:", error);
+      res.status(500).json({
+        message: "Internal server error",
+      });
+    }
+  }
+);
+
+/////////////////////////////////////////////////////////////////////////////////////
+
+// Get admin published images
+export const GetAdminPublishedImages = expressAsyncHandler(
+  async (req: AuthenticatedRequest, res) => {
+    try {
+      if (!req.user?.id) {
+        res.status(401).json({
+          message: "Unauthorized",
+        });
+        return;
+      }
+      const user = await prisma.user.findUnique({
+        where: { id: req.user.id },
+      });
+
+      if (!user) {
+        res.status(404).json({
+          message: "User not found",
+        });
+        return;
+      }
+      const images = await prisma.image.findMany({
+        where: { userId: user.id, isVisible: true, published: true },
+        orderBy: { addedAt: "desc" },
+      });
+
+      res.status(200).json(images);
+    } catch (error) {
+      console.error("User info error:", error);
+      res.status(500).json({
+        message: "Internal server error",
+      });
+    }
+  }
+);
+
+/////////////////////////////////////////////////////////////////////////////////////
+
+// Get admin published images
+export const GetAdminDraftImages = expressAsyncHandler(
+  async (req: AuthenticatedRequest, res) => {
+    try {
+      if (!req.user?.id) {
+        res.status(401).json({
+          message: "Unauthorized",
+        });
+        return;
+      }
+      const user = await prisma.user.findUnique({
+        where: { id: req.user.id },
+      });
+
+      if (!user) {
+        res.status(404).json({
+          message: "User not found",
+        });
+        return;
+      }
+      const images = await prisma.image.findMany({
+        where: { userId: user.id, isVisible: true, published: false },
         orderBy: { addedAt: "desc" },
       });
 
@@ -795,7 +871,7 @@ export const EditCollection = expressAsyncHandler(async (req, res) => {
 /////////////////////////////////////////////////////////////////////////////////////
 
 // Image upload
-export const Uploadimage = expressAsyncHandler(async (req, res) => {
+export const UploadImage = expressAsyncHandler(async (req, res) => {
   try {
     if (!req.file) {
       res.status(400).json({
@@ -869,7 +945,6 @@ export const CreateUserCollection = expressAsyncHandler(async (req, res) => {
       },
     });
 
-    // Manually set the date to the image (mongodb sort the array of images inside the collection auto based on the addedAt field in the Image model)
     const date = new Date();
     await prisma.image.update({
       where: {

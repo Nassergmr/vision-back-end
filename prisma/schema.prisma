@@ -38,20 +38,20 @@ model User {
 }
 
 model Image {
-  id String @id @default(auto()) @map("_id") @db.ObjectId
-  // public_id String @unique
-
-  title             String
-  width             Int
-  height            Int
-  location          String?
-  tags              String[]
-  views             Int       @default(0)
-  url               String
-  published         Boolean   @default(false)
-  isVisible         Boolean   @default(true)
-  addedAt           DateTime  @default(now())
-  addedToCollection DateTime?
+  id                      String    @id @default(auto()) @map("_id") @db.ObjectId
+  title                   String
+  width                   Int
+  height                  Int
+  location                String?
+  tags                    String[]
+  views                   Int       @default(0)
+  url                     String
+  published               Boolean   @default(false)
+  isVisible               Boolean   @default(true)
+  addedAt                 DateTime  @default(now())
+  addedToLikedImages      DateTime?
+  addedToCollection       DateTime?
+  addedToDownloadedImages DateTime?
 
   user   User   @relation(fields: [userId], references: [id], name: "userImages")
   userId String @db.ObjectId

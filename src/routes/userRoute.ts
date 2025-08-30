@@ -9,7 +9,7 @@ import {
   GetAdminCollections,
   GetAllUsers,
   GetCollections,
-  Uploadimage,
+  UploadImage,
   UserProfilePublic,
   UserprofileEdit,
   UserAvatarEdit,
@@ -25,6 +25,8 @@ import {
   GetAdminDownloadedImages,
   GetPopularUserImages,
   GetAdminAvatar,
+  GetAdminDraftImages,
+  GetAdminPublishedImages,
 } from "../controllers/userController";
 import multer from "multer";
 import { v2 as cloudinary } from "cloudinary";
@@ -57,6 +59,14 @@ userRouter.get("/get-user-images/:id", GetUserImages);
 userRouter.get("/get-user-popular-images/:id", GetPopularUserImages);
 userRouter.get("/get-collections", GetCollections);
 userRouter.get("/get-admin-data", validateToken, GetAdminData);
+userRouter.get("/get-admin-images", validateToken, GetAdminImages);
+userRouter.get(
+  "/get-admin-published-images",
+  validateToken,
+  GetAdminPublishedImages
+);
+userRouter.get("/get-admin-draft-images", validateToken, GetAdminDraftImages);
+
 userRouter.get("/get-admin-avatar", validateToken, GetAdminAvatar);
 userRouter.get("/get-admin-likes", validateToken, GetAdminLikes);
 userRouter.get("/get-admin-liked-images", validateToken, GetAdminLikedImages);
@@ -67,11 +77,10 @@ userRouter.get(
 );
 userRouter.get("/get-admin-collections", validateToken, GetAdminCollections);
 userRouter.get("/get-admin-collection/:id", GetAdminCollection);
-userRouter.get("/get-admin-images", validateToken, GetAdminImages);
 
 userRouter.post("/register", RegisterUser);
 userRouter.post("/login", LoginUser);
-userRouter.post("/upload", validateToken, upload.single("image"), Uploadimage);
+userRouter.post("/upload", validateToken, upload.single("image"), UploadImage);
 userRouter.post("/create-collection", CreateUserCollection);
 userRouter.post("/update-collection", AddToCollection);
 userRouter.post("/send-message", SendUserMessage);

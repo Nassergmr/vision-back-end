@@ -256,6 +256,7 @@ export const UpdateImageLikes = expressAsyncHandler(async (req, res) => {
         where: { id: imageId },
         data: { likesCount: { decrement: 1 } },
       });
+
       res.status(200).json({
         message: "Image Unliked Successfully",
       });
@@ -269,9 +270,11 @@ export const UpdateImageLikes = expressAsyncHandler(async (req, res) => {
         userId: userId,
       },
     });
+
+    const date = new Date();
     await prisma.image.update({
       where: { id: imageId },
-      data: { likesCount: { increment: 1 } },
+      data: { likesCount: { increment: 1 }, addedToLikedImages: date },
     });
 
     if (!likes) {
@@ -373,6 +376,7 @@ export const UpdateImageDownloads = expressAsyncHandler(async (req, res) => {
         },
       },
     });
+
     if (downloaded) {
       res.status(400).json({
         message: "image already downloaded",
@@ -382,6 +386,12 @@ export const UpdateImageDownloads = expressAsyncHandler(async (req, res) => {
 
     const downloadedImage = await prisma.download.create({
       data: { imageId: imageId, userId: userId },
+    });
+
+    const date = new Date();
+    await prisma.image.update({
+      where: { id: imageId },
+      data: { addedToDownloadedImages: date },
     });
 
     if (!image) {
