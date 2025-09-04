@@ -71,7 +71,11 @@ export const GetPopularImages = expressAsyncHandler(async (req, res) => {
         published: true,
         isVisible: true,
       },
-      orderBy: { likesCount: "desc" },
+      orderBy: [
+        { likesCount: "desc" },
+        { views: "desc" },
+        { downloadsCount: "desc" },
+      ],
       include: {
         user: true,
       },
@@ -85,6 +89,90 @@ export const GetPopularImages = expressAsyncHandler(async (req, res) => {
     res.status(200).json({
       message: "image found",
       image,
+    });
+  } catch (error) {
+    console.log(error);
+  }
+});
+
+//////////////////////////////////////////////////////////////////////////////
+
+// Get image likes
+export const GetImageLikes = expressAsyncHandler(async (req, res) => {
+  const imageId = req.params.id;
+  try {
+    const image = await prisma.image.findUnique({
+      where: { id: imageId },
+      select: { likes: true },
+    });
+
+    if (!image) {
+      res.status(404).json({
+        message: "No image found",
+      });
+      return;
+    }
+
+    res.status(200).json({
+      image,
+    });
+  } catch (error) {
+    console.log(error);
+  }
+});
+
+//////////////////////////////////////////////////////////////////////////////
+
+// Get image comments
+export const GetImageComments = expressAsyncHandler(async (req, res) => {
+  const imageId = req.params.id;
+  try {
+    const comments = await prisma.comment.findMany({
+      where: { imageId: imageId },
+      include: { user: true },
+      orderBy: { createdAt: "desc" },
+    });
+
+    res.status(200).json({
+      comments,
+    });
+  } catch (error) {
+    console.log(error);
+  }
+});
+
+//////////////////////////////////////////////////////////////////////////////
+
+// Get image views
+export const GetImageViews = expressAsyncHandler(async (req, res) => {
+  const imageId = req.params.id;
+  try {
+    const views = await prisma.image.findUnique({
+      where: { id: imageId },
+      select: { views: true },
+    });
+
+    res.status(200).json({
+      views,
+    });
+  } catch (error) {
+    console.log(error);
+  }
+});
+
+//////////////////////////////////////////////////////////////////////////////
+
+// Get image downloads count
+export const GetImageDownloadsCount = expressAsyncHandler(async (req, res) => {
+  const imageId = req.params.id;
+  try {
+    const downloadsCount = await prisma.image.findUnique({
+      where: { id: imageId },
+      select: { downloadsCount: true },
+    });
+
+    res.status(200).json({
+      downloadsCount,
     });
   } catch (error) {
     console.log(error);
@@ -135,89 +223,6 @@ export const UpdateImageVisibility = expressAsyncHandler(async (req, res) => {
     res.status(200).json({
       message: "Published Successfully",
       imageId,
-    });
-  } catch (error) {
-    console.log(error);
-  }
-});
-
-//////////////////////////////////////////////////////////////////////////////
-
-// Get image likes
-export const GetImageLikes = expressAsyncHandler(async (req, res) => {
-  const imageId = req.params.id;
-  try {
-    const image = await prisma.image.findUnique({
-      where: { id: imageId },
-      select: { likes: true },
-    });
-
-    if (!image) {
-      res.status(404).json({
-        message: "No image found",
-      });
-      return;
-    }
-
-    res.status(200).json({
-      image,
-    });
-  } catch (error) {
-    console.log(error);
-  }
-});
-
-//////////////////////////////////////////////////////////////////////////////
-
-// Get image comments
-export const GetImageComments = expressAsyncHandler(async (req, res) => {
-  const imageId = req.params.id;
-  try {
-    const comments = await prisma.comment.findMany({
-      where: { imageId: imageId },
-      include: { user: true },
-    });
-
-    res.status(200).json({
-      comments,
-    });
-  } catch (error) {
-    console.log(error);
-  }
-});
-
-//////////////////////////////////////////////////////////////////////////////
-
-// Get image views
-export const GetImageViews = expressAsyncHandler(async (req, res) => {
-  const imageId = req.params.id;
-  try {
-    const views = await prisma.image.findUnique({
-      where: { id: imageId },
-      select: { views: true },
-    });
-
-    res.status(200).json({
-      views,
-    });
-  } catch (error) {
-    console.log(error);
-  }
-});
-
-//////////////////////////////////////////////////////////////////////////////
-
-// Get image downloads count
-export const GetImageDownloadsCount = expressAsyncHandler(async (req, res) => {
-  const imageId = req.params.id;
-  try {
-    const downloadsCount = await prisma.image.findUnique({
-      where: { id: imageId },
-      select: { downloadsCount: true },
-    });
-
-    res.status(200).json({
-      downloadsCount,
     });
   } catch (error) {
     console.log(error);
