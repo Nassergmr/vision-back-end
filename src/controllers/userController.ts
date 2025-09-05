@@ -651,7 +651,11 @@ export const GetPopularUserImages = expressAsyncHandler(async (req, res) => {
         published: true,
         isVisible: true,
       },
-      orderBy: { likesCount: "desc" },
+      orderBy: [
+        { likesCount: "desc" },
+        { downloadsCount: "desc" },
+        { views: "desc" },
+      ],
       include: {
         user: true,
       },
@@ -906,6 +910,7 @@ export const UploadImage = expressAsyncHandler(async (req, res) => {
         userId: user.id,
         title: req.body.title,
         location: req.body.location,
+        tags: req.body.tags,
         height: result.height,
         url: path,
         width: result.width,

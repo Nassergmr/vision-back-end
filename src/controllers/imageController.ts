@@ -73,8 +73,8 @@ export const GetPopularImages = expressAsyncHandler(async (req, res) => {
       },
       orderBy: [
         { likesCount: "desc" },
-        { views: "desc" },
         { downloadsCount: "desc" },
+        { views: "desc" },
       ],
       include: {
         user: true,

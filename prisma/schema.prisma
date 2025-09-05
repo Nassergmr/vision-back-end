@@ -43,7 +43,7 @@ model Image {
   width                   Int
   height                  Int
   location                String?
-  tags                    String[]
+  tags                    String?
   views                   Int       @default(0)
   url                     String
   published               Boolean   @default(false)
