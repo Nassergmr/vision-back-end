@@ -130,7 +130,7 @@ export const GetImageComments = expressAsyncHandler(async (req, res) => {
     const comments = await prisma.comment.findMany({
       where: { imageId: imageId },
       include: { user: true },
-      orderBy: { createdAt: "desc" },
+      orderBy: { createdAt: "asc" },
     });
 
     res.status(200).json({
