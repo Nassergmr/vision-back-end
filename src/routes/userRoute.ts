@@ -1,9 +1,6 @@
 import express from "express";
 import { validateToken } from "../middlewares/tokenValidationHandler";
 import {
-  VerifyUser,
-  LoginUser,
-  RegisterUser,
   GetAdminData,
   GetAdminLikes,
   GetAdminCollections,
@@ -52,7 +49,6 @@ const storage = new CloudinaryStorage({
 
 const upload = multer({ storage });
 
-userRouter.get("/verify-email", VerifyUser);
 userRouter.get("/get-users", GetAllUsers);
 userRouter.get("/profile/:id", UserProfilePublic);
 userRouter.get("/get-user-images/:id", GetUserImages);
@@ -78,8 +74,6 @@ userRouter.get(
 userRouter.get("/get-admin-collections", validateToken, GetAdminCollections);
 userRouter.get("/get-admin-collection/:id", GetAdminCollection);
 
-userRouter.post("/register", RegisterUser);
-userRouter.post("/login", LoginUser);
 userRouter.post("/upload", validateToken, upload.single("image"), UploadImage);
 userRouter.post("/create-collection", CreateUserCollection);
 userRouter.post("/update-collection", AddToCollection);
