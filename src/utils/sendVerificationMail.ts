@@ -1,6 +1,6 @@
 import nodemailer from "nodemailer";
 
-export const SendMail = (email: string, emailToken: string) => {
+export const SendVerificationMail = (email: string, emailToken: string) => {
   try {
     const transporter = nodemailer.createTransport({
       host: process.env.SMTP_HOST,

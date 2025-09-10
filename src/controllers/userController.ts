@@ -1,11 +1,7 @@
 import expressAsyncHandler from "express-async-handler";
 import { PrismaClient } from "../generated/prisma";
-import bcrypt from "bcrypt";
-import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
 import { Request } from "express";
-import crypto from "crypto";
-import { SendMail } from "../utils/sendMail";
 import { SendMessage } from "../utils/sendMessage";
 import { cloudinary } from "../routes/userRoute";
 
