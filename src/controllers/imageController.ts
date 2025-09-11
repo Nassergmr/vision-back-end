@@ -360,6 +360,34 @@ export const UpdateImageViews = expressAsyncHandler(async (req, res) => {
 
 //////////////////////////////////////////////////////////////////////////////
 
+// Update image views
+export const UpdateImageOptimisation = expressAsyncHandler(async (req, res) => {
+  const imageId = req.body.imageId;
+
+  try {
+    const image = await prisma.image.update({
+      where: { id: imageId },
+      data: {
+        unoptimized: false,
+      },
+    });
+    if (!image) {
+      res.status(404).json({
+        message: "No image found",
+      });
+      return;
+    }
+    res.status(200).json({
+      message: "Image Updated",
+      image,
+    });
+  } catch (error) {
+    console.log(error);
+  }
+});
+
+//////////////////////////////////////////////////////////////////////////////
+
 // Update image downloads
 export const UpdateImageDownloads = expressAsyncHandler(async (req, res) => {
   const imageId = req.body.imageId;

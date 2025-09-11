@@ -48,6 +48,7 @@ model Image {
   url                     String
   published               Boolean   @default(false)
   isVisible               Boolean   @default(true)
+  unoptimized             Boolean   @default(true)
   addedAt                 DateTime  @default(now())
   addedToLikedImages      DateTime?
   addedToCollection       DateTime?

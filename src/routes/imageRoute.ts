@@ -13,6 +13,7 @@ import {
   GetImage,
   DeleteImage,
   GetPopularImages,
+  UpdateImageOptimisation,
 } from "../controllers/imageController";
 
 const imageRouter = express.Router();
@@ -26,6 +27,7 @@ imageRouter.get("/get-views/:id", GetImageViews);
 imageRouter.get("/get-downloads-count/:id", GetImageDownloadsCount);
 
 imageRouter.post("/update-image", UpdateImageVisibility);
+imageRouter.patch("/update-optimisation", UpdateImageOptimisation);
 imageRouter.post("/update-like", UpdateImageLikes);
 imageRouter.post("/update-comments", UpdateimageComments);
 imageRouter.post("/update-views", UpdateImageViews);
