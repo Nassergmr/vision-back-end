@@ -28,7 +28,7 @@ export const RegisterUser = expressAsyncHandler(async (req, res) => {
 
     if (userExists) {
       res.status(409).json({
-        message: "User already exists",
+        message: "User already exists, log in instead",
       });
       return;
     }
@@ -256,7 +256,7 @@ export const SendResetPasswordMail = expressAsyncHandler(async (req, res) => {
 
 /////////////////////////////////////////////////////////////////////////////////////
 
-// Update user password
+// Update user password (Forgot password)
 export const UpdateUserPassword = expressAsyncHandler(async (req, res) => {
   const { token } = req.query;
 
@@ -304,6 +304,47 @@ export const UpdateUserPassword = expressAsyncHandler(async (req, res) => {
     });
     return;
   }
+
+  res.status(200).json({
+    message: "Password updated successfully",
+  });
+});
+
+/////////////////////////////////////////////////////////////////////////////////////
+
+// Change user password (Change password from settings)
+export const ChangeUserPassword = expressAsyncHandler(async (req, res) => {
+  const { email, currentPassword, newPassword } = req.body;
+
+  const user = await prisma.user.findFirst({
+    where: {
+      email: email,
+    },
+  });
+
+  if (!user) {
+    res.status(404).json({ message: "No user found" });
+  }
+  if (user) {
+    const passwordMatch = await bcrypt.compare(currentPassword, user.password);
+
+    if (!passwordMatch) {
+      res.status(401).json({
+        message: "Your password is incorrect",
+      });
+      return;
+    }
+  }
+
+  const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+  user &&
+    (await prisma.user.update({
+      where: { email: email },
+      data: {
+        password: hashedPassword,
+      },
+    }));
 
   res.status(200).json({
     message: "Password updated successfully",

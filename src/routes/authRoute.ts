@@ -1,5 +1,6 @@
 import express from "express";
 import {
+  ChangeUserPassword,
   LoginUser,
   RegisterUser,
   SendResetPasswordMail,
@@ -16,4 +17,6 @@ authRouter.post("/register", RegisterUser);
 authRouter.post("/login", LoginUser);
 
 authRouter.patch("/update-password", UpdateUserPassword);
+authRouter.patch("/change-password", ChangeUserPassword);
+
 export default authRouter;

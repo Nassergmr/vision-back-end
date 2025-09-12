@@ -559,6 +559,8 @@ export const UserprofileEdit = expressAsyncHandler(async (req, res) => {
     id,
     firstName,
     lastName,
+    email,
+    password,
     bio,
     location,
     website,
@@ -582,6 +584,8 @@ export const UserprofileEdit = expressAsyncHandler(async (req, res) => {
       data: {
         firstName,
         lastName,
+        email,
+        password,
         bio,
         location,
         website,
@@ -599,7 +603,6 @@ export const UserprofileEdit = expressAsyncHandler(async (req, res) => {
       });
       return;
     }
-
     res.status(200).json(user);
   } catch (error) {
     console.error("User info error:", error);
@@ -627,11 +630,13 @@ export const UserAvatarEdit = expressAsyncHandler(async (req, res) => {
       });
       return;
     }
+    const { filename } = req.file;
+    const result = await cloudinary.api.resource(filename);
 
     await prisma.user.update({
       where: { id: req.user.id },
       data: {
-        avatar: req.file.path,
+        avatar: result.public_id,
       },
     });
 
@@ -691,7 +696,7 @@ export const UploadImage = expressAsyncHandler(async (req, res) => {
       });
       return;
     }
-    const { path, filename } = req.file;
+    const { filename } = req.file;
 
     const result = await cloudinary.api.resource(filename);
 
@@ -702,7 +707,7 @@ export const UploadImage = expressAsyncHandler(async (req, res) => {
         location: req.body.location,
         tags: req.body.tags,
         height: result.height,
-        url: path,
+        public_id: result.public_id,
         width: result.width,
       },
     });
