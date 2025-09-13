@@ -50,7 +50,7 @@ const storage = new CloudinaryStorage({
 const upload = multer({ storage });
 
 userRouter.get("/get-users", GetAllUsers);
-userRouter.get("/profile/:id", UserProfilePublic);
+userRouter.get("/profile/:slug", UserProfilePublic);
 userRouter.get("/get-user-images/:id", GetUserImages);
 userRouter.get("/get-user-popular-images/:id", GetPopularUserImages);
 userRouter.get("/get-collections", GetCollections);

@@ -470,7 +470,7 @@ export const GetPopularUserImages = expressAsyncHandler(async (req, res) => {
 // Get user profile
 export const UserProfilePublic = expressAsyncHandler(async (req, res) => {
   try {
-    if (!req.params?.id) {
+    if (!req.params?.slug) {
       res.status(404).json({
         message: "No user Found",
       });
@@ -478,7 +478,7 @@ export const UserProfilePublic = expressAsyncHandler(async (req, res) => {
     }
 
     const user = await prisma.user.findUnique({
-      where: { id: req.params.id },
+      where: { slug: req.params.slug },
       include: { images: true },
     });
 

@@ -42,9 +42,26 @@ export const RegisterUser = expressAsyncHandler(async (req, res) => {
         firstName: userFirstName,
         lastName: userLastName,
         email: userEmail,
+        slug: "",
         password: hashedPassword,
         verificationToken: verificationToken,
         verificationTokenExpiry: verificationTokenExpiry,
+      },
+    });
+
+    const userId = await prisma.user.findFirst({
+      where: { email: userEmail },
+    });
+
+    const shortId = userId?.id.slice(0, 6);
+    const slug = `${userFirstName.toLowerCase()}-${shortId}`;
+
+    await prisma.user.update({
+      where: {
+        email: userEmail,
+      },
+      data: {
+        slug: slug,
       },
     });
 

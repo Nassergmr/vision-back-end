@@ -373,44 +373,44 @@ export const UpdateImageDownloads = expressAsyncHandler(async (req, res) => {
       },
     });
 
-    const downloaded = await prisma.download.findUnique({
-      where: {
-        userId_imageId: {
-          imageId: imageId,
-          userId: userId,
+    if (userId) {
+      const downloaded = await prisma.download.findUnique({
+        where: {
+          userId_imageId: {
+            imageId: imageId,
+            userId: userId,
+          },
         },
-      },
-    });
-
-    if (downloaded) {
-      res.status(400).json({
-        message: "image already downloaded",
       });
-      return;
-    }
-
-    const downloadedImage = await prisma.download.create({
-      data: { imageId: imageId, userId: userId },
-    });
-
-    const date = new Date();
-    await prisma.image.update({
-      where: { id: imageId },
-      data: { addedToDownloadedImages: date },
-    });
-
-    if (!image) {
-      res.status(404).json({
-        message: "No image found",
+      if (downloaded) {
+        res.status(400).json({
+          message: "image already downloaded",
+        });
+        return;
+      }
+      const downloadedImage = await prisma.download.create({
+        data: { imageId: imageId, userId: userId },
       });
-      return;
-    }
 
-    res.status(200).json({
-      message: "Image Updated",
-      image,
-      downloadedImage,
-    });
+      const date = new Date();
+      await prisma.image.update({
+        where: { id: imageId },
+        data: { addedToDownloadedImages: date },
+      });
+
+      if (!image) {
+        res.status(404).json({
+          message: "No image found",
+        });
+        return;
+      }
+
+      res.status(200).json({
+        message: "Image Updated",
+        image,
+        downloadedImage,
+      });
+    }
   } catch (error) {
     console.log(error);
   }
