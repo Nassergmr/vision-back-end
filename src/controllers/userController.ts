@@ -27,7 +27,7 @@ export const SendUserMessage = expressAsyncHandler(async (req, res) => {
       message: "Message sent successfully!",
     });
   } catch (error) {
-    console.log(error);
+    console.error(error);
   }
 });
 
@@ -210,7 +210,7 @@ export const GetAdminDownloadedImages = expressAsyncHandler(
         downloadedImages,
       });
     } catch (error) {
-      console.log(error);
+      console.error(error);
     }
   }
 );
@@ -424,7 +424,7 @@ export const GetUserImages = expressAsyncHandler(async (req, res) => {
       image,
     });
   } catch (error) {
-    console.log(error);
+    console.error(error);
   }
 });
 
@@ -461,7 +461,7 @@ export const GetPopularUserImages = expressAsyncHandler(async (req, res) => {
       image,
     });
   } catch (error) {
-    console.log(error);
+    console.error(error);
   }
 });
 
@@ -519,7 +519,7 @@ export const GetAllUsers = expressAsyncHandler(async (req, res) => {
       user,
     });
   } catch (error) {
-    console.log(error);
+    console.error(error);
   }
 });
 
@@ -547,7 +547,7 @@ export const GetCollections = expressAsyncHandler(async (req, res) => {
       collection,
     });
   } catch (error) {
-    console.log(error);
+    console.error(error);
   }
 });
 
@@ -644,7 +644,7 @@ export const UserAvatarEdit = expressAsyncHandler(async (req, res) => {
       message: "file uploaded successfully",
     });
   } catch (error) {
-    console.log(error);
+    console.error(error);
   }
 });
 
@@ -663,7 +663,7 @@ export const EditCollection = expressAsyncHandler(async (req, res) => {
       message: "collection updated successfully",
     });
   } catch (error) {
-    console.log(error);
+    console.error(error);
   }
 });
 
@@ -716,9 +716,8 @@ export const UploadImage = expressAsyncHandler(async (req, res) => {
       message: "image uploaded successfully",
       data: image,
     });
-    console.log(image);
   } catch (error) {
-    console.log(error);
+    console.error(error);
   }
 });
 
@@ -760,7 +759,7 @@ export const CreateUserCollection = expressAsyncHandler(async (req, res) => {
     res.status(500).json({
       message: error,
     });
-    console.log(error);
+    console.error(error);
   }
 });
 
@@ -827,7 +826,7 @@ export const AddToCollection = expressAsyncHandler(async (req, res) => {
     res.status(500).json({
       message: error,
     });
-    console.log(error);
+    console.error(error);
   }
 });
 
@@ -844,6 +843,6 @@ export const DeleteCollection = expressAsyncHandler(async (req, res) => {
       message: "Collection Deleted",
     });
   } catch (error) {
-    console.log(error);
+    console.error(error);
   }
 });

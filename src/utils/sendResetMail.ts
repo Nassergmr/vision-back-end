@@ -22,10 +22,8 @@ export const SendResetMail = (email: string, token: string) => {
        <p>Please click the link below to set a new password:</p>
        <a href="http://localhost:3000/reset-password/new-password?token=${token}">Reset my password</a>`,
       });
-
-      console.log("Message sent:", info.messageId);
     })();
   } catch (error) {
-    console.log(error);
+    alert(error);
   }
 };

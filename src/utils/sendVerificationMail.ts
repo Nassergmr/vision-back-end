@@ -21,10 +21,8 @@ export const SendVerificationMail = (email: string, emailToken: string) => {
         html: `<p>Please verify your email by clicking the link below:</p>
        <a href="http://localhost:3000/verify-email?token=${emailToken}">Verify Email</a>`,
       });
-
-      console.log("Message sent:", info.messageId);
     })();
   } catch (error) {
-    console.log(error);
+    alert(error);
   }
 };

@@ -27,7 +27,7 @@ export const GetImage = expressAsyncHandler(async (req, res) => {
       image,
     });
   } catch (error) {
-    console.log(error);
+    console.error(error);
   }
 });
 
@@ -57,7 +57,7 @@ export const GetPublishedImages = expressAsyncHandler(async (req, res) => {
       image,
     });
   } catch (error) {
-    console.log(error);
+    console.error(error);
   }
 });
 
@@ -91,7 +91,7 @@ export const GetPopularImages = expressAsyncHandler(async (req, res) => {
       image,
     });
   } catch (error) {
-    console.log(error);
+    console.error(error);
   }
 });
 
@@ -117,7 +117,7 @@ export const GetImageLikes = expressAsyncHandler(async (req, res) => {
       image,
     });
   } catch (error) {
-    console.log(error);
+    console.error(error);
   }
 });
 
@@ -137,7 +137,7 @@ export const GetImageComments = expressAsyncHandler(async (req, res) => {
       comments,
     });
   } catch (error) {
-    console.log(error);
+    console.error(error);
   }
 });
 
@@ -156,7 +156,7 @@ export const GetImageViews = expressAsyncHandler(async (req, res) => {
       views,
     });
   } catch (error) {
-    console.log(error);
+    console.error(error);
   }
 });
 
@@ -175,7 +175,7 @@ export const GetImageDownloadsCount = expressAsyncHandler(async (req, res) => {
       downloadsCount,
     });
   } catch (error) {
-    console.log(error);
+    console.error(error);
   }
 });
 
@@ -225,7 +225,7 @@ export const UpdateImageVisibility = expressAsyncHandler(async (req, res) => {
       imageId,
     });
   } catch (error) {
-    console.log(error);
+    console.error(error);
   }
 });
 
@@ -293,7 +293,7 @@ export const UpdateImageLikes = expressAsyncHandler(async (req, res) => {
       likes,
     });
   } catch (error) {
-    console.log(error);
+    console.error(error);
   }
 });
 
@@ -326,7 +326,7 @@ export const UpdateimageComments = expressAsyncHandler(async (req, res) => {
       comment,
     });
   } catch (error) {
-    console.log(error);
+    console.error(error);
   }
 });
 
@@ -354,7 +354,7 @@ export const UpdateImageViews = expressAsyncHandler(async (req, res) => {
       image,
     });
   } catch (error) {
-    console.log(error);
+    console.error(error);
   }
 });
 
@@ -412,7 +412,7 @@ export const UpdateImageDownloads = expressAsyncHandler(async (req, res) => {
       });
     }
   } catch (error) {
-    console.log(error);
+    console.error(error);
   }
 });
 
@@ -440,6 +440,6 @@ export const DeleteImage = expressAsyncHandler(async (req, res) => {
       image,
     });
   } catch (error) {
-    console.log(error);
+    console.error(error);
   }
 });

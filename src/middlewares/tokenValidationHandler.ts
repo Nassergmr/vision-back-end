@@ -25,9 +25,8 @@ export const validateToken = expressAsyncHandler(async (req, res, next) => {
     jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, decoded) => {
       if (err) {
         res.status(401);
-        console.log(err);
+        console.error(err);
       }
-
       // Type assertion to tell TypeScript we've augmented the Request type
       const payload = decoded as { user: { email: string; id: string } };
       req.user = payload.user;

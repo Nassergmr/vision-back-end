@@ -24,10 +24,8 @@ export const SendMessage = (
         text: `${content}`,
         replyTo: sender,
       });
-
-      console.log("Message sent:", info.messageId);
     })();
   } catch (error) {
-    console.log(error);
+    alert(error);
   }
 };
