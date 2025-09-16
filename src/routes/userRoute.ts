@@ -28,6 +28,7 @@ import {
 import multer from "multer";
 import { v2 as cloudinary } from "cloudinary";
 import { CloudinaryStorage } from "multer-storage-cloudinary";
+import { Request } from "express";
 
 const userRouter = express.Router();
 
@@ -40,7 +41,7 @@ cloudinary.config({
 
 const storage = new CloudinaryStorage({
   cloudinary,
-  params: async (req, file) => ({
+  params: async (req: Request, file: Express.Multer.File) => ({
     folder: "user-uploads",
     format: file.mimetype.split("/")[1],
     allowed_formats: ["jpg", "png", "jpeg"],

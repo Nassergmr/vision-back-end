@@ -1,5 +1,5 @@
 import expressAsyncHandler from "express-async-handler";
-import { PrismaClient } from "../generated/prisma";
+import { PrismaClient } from "@prisma/client";
 import dotenv from "dotenv";
 
 const prisma = new PrismaClient();
@@ -383,9 +383,6 @@ export const UpdateImageDownloads = expressAsyncHandler(async (req, res) => {
         },
       });
       if (downloaded) {
-        res.status(400).json({
-          message: "image already downloaded",
-        });
         return;
       }
       const downloadedImage = await prisma.download.create({

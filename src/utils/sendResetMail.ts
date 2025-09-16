@@ -17,10 +17,10 @@ export const SendResetMail = (email: string, token: string) => {
         from: `"Vision" <${process.env.SMTP_USER}>`,
         to: email,
         subject: "Reset password",
-        text: `You requested to reset your password. Please click the following link to set a new password: http://localhost:3000/reset-password/new-password?token=${token}`,
+        text: `You requested to reset your password. Please click the following link to set a new password: https://vision-platform.vercel.app/reset-password/new-password?token=${token}`,
         html: `<p>You requested to reset your password.</p>
        <p>Please click the link below to set a new password:</p>
-       <a href="http://localhost:3000/reset-password/new-password?token=${token}">Reset my password</a>`,
+       <a href="https://vision-platform.vercel.app/reset-password/new-password?token=${token}">Reset my password</a>`,
       });
     })();
   } catch (error) {

@@ -17,9 +17,9 @@ export const SendVerificationMail = (email: string, emailToken: string) => {
         from: `"Vision" <${process.env.SMTP_USER}>`,
         to: email,
         subject: "Email Verification",
-        text: `Please verify your email by clicking the following link: https://localhost:3000/verify-email?token=${emailToken}`,
+        text: `Please verify your email by clicking the following link: https://vision-platform.vercel.app/verify-email?token=${emailToken}`,
         html: `<p>Please verify your email by clicking the link below:</p>
-       <a href="http://localhost:3000/verify-email?token=${emailToken}">Verify Email</a>`,
+       <a href="https://vision-platform.vercel.app/verify-email?token=${emailToken}">Verify Email</a>`,
       });
     })();
   } catch (error) {

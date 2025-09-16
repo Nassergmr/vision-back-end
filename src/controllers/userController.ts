@@ -1,5 +1,5 @@
 import expressAsyncHandler from "express-async-handler";
-import { PrismaClient } from "../generated/prisma";
+import { PrismaClient } from "@prisma/client";
 import dotenv from "dotenv";
 import { Request } from "express";
 import { SendMessage } from "../utils/sendMessage";
@@ -559,8 +559,6 @@ export const UserprofileEdit = expressAsyncHandler(async (req, res) => {
     id,
     firstName,
     lastName,
-    email,
-    password,
     bio,
     location,
     website,
@@ -584,8 +582,6 @@ export const UserprofileEdit = expressAsyncHandler(async (req, res) => {
       data: {
         firstName,
         lastName,
-        email,
-        password,
         bio,
         location,
         website,

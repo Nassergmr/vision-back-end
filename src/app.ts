@@ -7,7 +7,13 @@ import searchRouter from "./routes/searchRoute";
 
 const app = express();
 
-app.use(cors());
+app.use(
+  cors({
+    origin: "https://vision-platform.vercel.app",
+    credentials: true,
+  })
+);
+
 app.use(express.json());
 
 app.use("/vision/auth", authRouter);

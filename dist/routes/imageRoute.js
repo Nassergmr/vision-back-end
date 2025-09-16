@@ -1,0 +1,22 @@
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const express_1 = __importDefault(require("express"));
+const imageController_1 = require("../controllers/imageController");
+const imageRouter = express_1.default.Router();
+imageRouter.get("/get-image/:id", imageController_1.GetImage);
+imageRouter.get("/get-images", imageController_1.GetPublishedImages);
+imageRouter.get("/get-popular-images", imageController_1.GetPopularImages);
+imageRouter.get("/get-likes/:id", imageController_1.GetImageLikes);
+imageRouter.get("/get-comments/:id", imageController_1.GetImageComments);
+imageRouter.get("/get-views/:id", imageController_1.GetImageViews);
+imageRouter.get("/get-downloads-count/:id", imageController_1.GetImageDownloadsCount);
+imageRouter.post("/update-image", imageController_1.UpdateImageVisibility);
+imageRouter.post("/update-like", imageController_1.UpdateImageLikes);
+imageRouter.post("/update-comments", imageController_1.UpdateimageComments);
+imageRouter.post("/update-views", imageController_1.UpdateImageViews);
+imageRouter.post("/update-downloads", imageController_1.UpdateImageDownloads);
+imageRouter.patch("/delete-image/:id", imageController_1.DeleteImage);
+exports.default = imageRouter;
